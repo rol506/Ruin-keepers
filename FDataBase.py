@@ -5,6 +5,9 @@ class FDataBase:
         self.__db = db
         self.__cur = self.__db.cursor()
 
+    def __del__(self):
+        self.__db.close()
+
     def addEvent(self, name, description, photoPath, place, cost: int):
         sql = """INSERT INTO events (name, description, photoPath, place, cost) VALUES (?, ?, ?, ?, ?)"""
         try:
