@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\templates"
   ],
-  "SelectedNode": "\\FDataBase.py",
+  "SelectedNode": "\\flsite.py",
   "PreviewInSolutionExplorer": false
 }
