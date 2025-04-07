@@ -2,6 +2,7 @@ from flask import Flask, render_template, g, request, url_for, redirect
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
+import chardet
 from FDataBase import FDataBase
 
 app = Flask("ruinKeeper")
