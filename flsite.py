@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, url_for, redirect
+from flask import Flask, render_template, g, request, url_for, redirect, flash
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
@@ -39,8 +39,9 @@ def connect_db():
 
 def create_db():
     db = connect_db()
-    with app.open_resource("sq_db.sql", "r") as f:
+    with open("sq_db.sql", "r") as f:
         db.cursor().executescript(f.read())
+        #print(f.read())
     db.commit()
     db.close()
 
@@ -65,9 +66,30 @@ def index():
     #db = FDataBase(get_db())
     #return render_template("event_choose.html", menu=menu, title="мероприятия")
 
+def process_request(name, birth, telegram, phone):
+    flash("Вы успешно зарегистрировались на мероприятие!", "info")
+    return redirect(url_for("index"))
+
 @app.route("/events/events/register", methods=["POST", "GET"])
 def register_event():
-    return render_template("register_event.html", menu=menu)
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        birth = request.form.get("birth")
+        telegram = request.form.get("telegram")
+        phone = request.form.get("phone")
+
+        eventID = request.form.get("eventID")
+
+        if eventID == "None":
+            flash("Пожалуйста выберите мероприятие", "info")
+            return redirect(url_for("register_event"))
+
+        return process_request(name, birth, telegram, phone)
+
+    db = FDataBase(get_db())
+
+    return render_template("register.html", menu=menu, events=db.getEvents())
 
 @app.route("/events/events", methods=["POST", "GET"])
 def events():
@@ -75,7 +97,9 @@ def events():
     if request.method == "POST":
         return redirect(url_for("register_event"))
 
-    return render_template("events.html", menu=menu)
+    db = FDataBase(get_db())
+
+    return render_template("events.html", menu=menu, events=db.getEvents())
 
 @app.route("/events/walks")
 def walks():

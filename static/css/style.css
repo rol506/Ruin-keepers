@@ -6,6 +6,7 @@ html, body {
   padding: 0;
   margin: 0;
   overflow: scroll;
+  width: 100vw;
   scroll-behavior: smooth;
 }
 
@@ -103,20 +104,21 @@ form.login div {
   border-radius: 16px;
 }
 
-form.login input:not(input[type="submit"]):focus
+form.login input:not(input[type="submit"]):focus, select:focus
 {
   padding: 5px;
   border-radius: 8px;
   border: 1px solid black;
 }
 
-form.login input:not(input[type="submit"])
+form.login input:not(input[type="submit"]), select
 {
   padding: 2px;
   border-radius: 4px;
   border: 1px solid black;
   transition: 0.1s ease-out all;
   width: 100%;
+  background: white;
 }
 
 form.login div input[type="submit"], input[type="submit"]
@@ -199,4 +201,24 @@ a.anim:hover::before {
 
 .accent::after, .accent::before {
   background: #335435; 
+}
+
+div.bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
+}
+
+div.flash-info {
+  border: 1px solid black;
+  background: #7CE8E6;
+  border-radius: 16px;
+  padding: 10px;
+  position: relative;
+  margin: 10px;
+}
+
+div.flash-info p {
+  text-align: center;
 }

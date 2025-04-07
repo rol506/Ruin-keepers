@@ -23,6 +23,20 @@
         <form method="post">
           <input type="submit" value="Участвовать в мероприятии">
         </form>
+
+        <br><br>
+
+        {% for e in events %}
+          <div class="eventDesc">
+            <h3>{{e.name}}</h3>
+            {% if e.description|length > 50 %}
+            <p>{{e.description[:50]}}...</p>
+            {% else %}
+            <p>{{e.description}}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+
       </div>
     {% endblock body %}
   </body>

@@ -17,20 +17,32 @@
 
           <div>
 
-          <p>Фамилия</p>
-          <input type="text" required name="surname">
+          <p>ФИО</p>
+          <input type="text" required name="name" required>
 
-          <p>Имя</p>
-          <input type="text" required name="name">
+          <p>Ваше имя пользователя в телеграмм (необязательно)</p>
+          <input type="text" required name="telegram">
 
-          <p>Логин</p>
-          <input type="text" required name="login">
+          <p>Ваш номер телефона</p>
+          <input type="text" name="phone" required>
 
-          <p>Пароль</p>
-          <input type="password" required name="password">
+          <p>Ваша дата рождения</p>
+          <input type="date" name="birth" required>
+
+          {% if eventID %}
+            <input type="hidden" name="eventID" required>
+          {% else %}
+            <p>Выберите мероприятие</p>
+            <select name="eventID">
+              <option value="None">Выберите мероприятие</option>
+              {% for e in events %}
+                <option value="{{e.id}}">{{e.name}}</option>
+              {% endfor %}
+            </select>
+          {% endif %}
 
           <br>
-          <input type="submit" value="Подтвердить">
+          <input type="submit" value="Подать заявку">
 
           </div>
 

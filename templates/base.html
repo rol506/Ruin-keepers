@@ -27,6 +27,14 @@
   <body>
     {% block body %}
 
+    {% block flash %}
+    <div class="bottom">
+      {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash-{{cat}}"><p>{{msg}}</p></div>
+      {% endfor %}
+    </div>
+    {% endblock flash %}
+
       {% block mainmenu %}
         <div class="mainmenu">
         {% for m in menu %}
