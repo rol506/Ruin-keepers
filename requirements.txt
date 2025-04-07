@@ -30,3 +30,4 @@ yookassa==3.5.0
 google-api-python-client
 oauth2client
 pygsheets
+numpy
