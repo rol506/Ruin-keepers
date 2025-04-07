@@ -11,8 +11,9 @@
     {% block body %}
       {{super()}}
       <div class="container">
-        <h1>404 Не найдено =(</h1>
-        <h3>Вы можете вернуться <a href="/home" class="anim" style="color: grey">на главную</a>.</h3>
+        <h1 style="font-size: 6rem">4<img src="{{url_for('static', filename='/images/broken_heart.png')}}" style="width: 6rem;">4</h1>
+        <h1>упс, эта страница не была найдена!</h1>
+        <h3>Вы можете вернуться <a href="/home" class="accent anim">на главную</a>.</h3>
       </div>
     {% endblock body %}
   </body>

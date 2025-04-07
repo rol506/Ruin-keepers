@@ -172,12 +172,8 @@ a.anim-header:hover::before {
 a.anim {
   position: relative;
   text-decoration: none;
-  color: #000;
+  /*color: #000;*/
   text-decoration: none;
-}
-
-a.anim:hover {
-  color: #000;
 }
 
 a.anim::before {
@@ -188,11 +184,19 @@ a.anim::before {
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #000;
+  /*background-color: #000;*/
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 a.anim:hover::before {
   transform: scaleX(1);
+}
+
+.accent {
+  color: #335435;
+}
+
+.accent::after, .accent::before {
+  background: #335435; 
 }
