@@ -101,7 +101,7 @@ def events():
 
     return render_template("events.html", menu=menu, events=db.getEvents())
 
-@app.route("/events/walks")
+@app.route("/events/walks", methods=["POST", "GET"])
 def walks():
     return render_template("walks.html", menu=menu)
 
