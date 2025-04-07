@@ -1,0 +1,100 @@
+* {
+  font-family: "Fira Sans", serif;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  overflow: scroll;
+  scroll-behavior: smooth;
+}
+
+div.mainmenu {
+  position: static;
+  background-color: rgba(0, 0, 0, 1);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 3rem;
+  min-width: 100vw;
+}
+
+div.mainmenu div:not(div.mainmenu div:first-child) {
+  padding-left: 2.5rem;
+}
+
+div.mainmenu div a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+@media screen and (max-width: 600px)
+{
+  div.mainmenu div a {
+    font-size: 1rem;
+  }
+
+  div.mainmenu div:not(div.mainmenu div:first-child) {
+    padding-left: 1.5rem;
+  }
+}
+
+
+a.anim-header {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  text-decoration: none;
+}
+
+a.anim-header:hover {
+  color: #fff;
+}
+
+a.anim-header::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-header:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim {
+  position: relative;
+  text-decoration: none;
+  color: #000;
+  text-decoration: none;
+}
+
+a.anim:hover {
+  color: #000;
+}
+
+a.anim::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim:hover::before {
+  transform: scaleX(1);
+}
