@@ -1,4 +1,7 @@
+import datetime
 import logging
+import random
+import time
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command
@@ -9,25 +12,160 @@ from aiogram.fsm.context import FSMContext
 
 from SETTINGS import telegram_token
 
+from FDataBase import FDataBase
+from flsite import create_db, connect_db
+
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=telegram_token)
 dp = Dispatcher()
+create_db()
+db: FDataBase = connect_db()
 
 class CreateEvent (StatesGroup):
     name_state = State()
     description_state = State()
     time_state = State()
 
-@dp.message(Command("start"), StateFilter(None))
-async def cmd_start(message: Message):
-    if False: # если чел не зареган
-        message_text = ('Здравствуйте! Это бот независимой организации "Хранители Руин". Через него менеджеры могут '
-                        'взаимодействовать с записями пользователей и добавлять новые события. Введите ваш одноразовый '
-                        'персональный код, чтобы получить доступ.')
-        await bot.send_message(message.chat.id, message_text)
-    else:
+# region Создание мероприятия
+
+@dp.message(CreateEvent.name_state)
+async def get_event_name(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
         await show_menu(message.chat.id)
+    else:
+        await state.update_data(event_name=message.text)
+        await bot.send_message(message.chat.id, 'Введите описание мероприятия.')
+        await state.set_state(CreateEvent.description_state)
+
+@dp.message(CreateEvent.description_state)
+async def get_event_description(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(event_description=message.text)
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия.')
+        await state.set_state(CreateEvent.time_state)
+
+@dp.message(CreateEvent.time_state)
+async def get_event_time(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.set_state(None)
+
+# endregion
+
+class RegisterUser (StatesGroup):
+    event_state = State()
+    name_state = State()
+    telegram_state = State()
+    phone_state = State()
+    birth_state = State()
+
+# region Регистрация пользователя
+
+@dp.message(RegisterUser.name_state)
+async def get_user_name(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(user_name=message.text)
+        await bot.send_message(message.chat.id, 'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя.')
+        await state.set_state(RegisterUser.event_state)
+
+@dp.message(RegisterUser.event_state)
+async def get_user_event(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        if message.text.isnumeric():
+            await state.update_data(user_event=int(message.text))
+            await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя.')
+            await state.set_state(RegisterUser.telegram_state)
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+
+@dp.message(RegisterUser.telegram_state)
+async def get_user_telegram(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(user_telegram=message.text)
+        await bot.send_message(message.chat.id, 'Введите номер телефона этого пользователя.')
+        await state.set_state(RegisterUser.phone_state)
+
+@dp.message(RegisterUser.phone_state)
+async def get_user_phone(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(user_phone=message.text)
+        await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг".')
+        await state.set_state(RegisterUser.birth_state)
+
+@dp.message(RegisterUser.birth_state)
+async def get_user_birth(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        birth = parse_date(message.text)
+        if birth is not None:
+            data = await state.get_data()
+
+            await bot.send_message(message.chat.id, f'{data['user_name']} успешно зарегистрирован(а) на мероприятие с ID {data['user_event']}.')
+            await db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
+            await state.set_state(None)
+        else:
+            await bot.send_message(message.chat.id, 'С вашей датой что-то не так.')
+
+# endregion
+
+def verify_admin(token):
+    tokens = open('admin_tokens.txt').read().split(',')
+    for i in range(len(tokens)):
+        if tokens[i] == token:
+            tokens.pop(i)
+            open('admin_tokens.txt').write(','.join(tokens))
+            return True
+    return False
+
+def generate_token(username):
+    token = ''
+    for i in range(10):
+        token += chr(ord('a') + random.randint(0, 26))
+    time_token = str(hash(time.time())) + str(hash(username))
+    return token + time_token
+
+def parse_date(date):
+    try:
+        date = date.split('.')
+        day, month, year = map(int, date)
+        return datetime.date(year, month, day)
+    except:
+        return None
+
+@dp.message(Command("start"))
+async def cmd_start(message: Message, state: FSMContext):
+    if True: # Если чел зареган как админ
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+
+@dp.message(Command("admin"))
+async def cmd_admin(message: Message):
+    args = message.split()
+    if len(args) > 1:
+        token = [1]
+        if verify_admin(token):
+            pass # бро реально стал админом
 
 async def show_menu(chat_id : int):
     message_text = 'Выберите действие через кнопки внизу.'
@@ -35,6 +173,8 @@ async def show_menu(chat_id : int):
         [KeyboardButton(text='Взаимодействие со списком участников')],
         [KeyboardButton(text='Взаимодействие со списком мероприятий')]
     ]
+    if True: # если старший админ
+        buttons += [KeyboardButton(text='Добавление администратора')]
     keyboard = ReplyKeyboardMarkup(keyboard=buttons)
 
     await bot.send_message(chat_id, message_text, reply_markup=keyboard)
@@ -63,7 +203,9 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Записать участника на мероприятие':
-                pass
+                message_text = 'Введите ФИО пользователя, которого хотите записать на мероприятие.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(RegisterUser.name_state)
             case 'Выписать участника с мероприятия':
                 pass
             case 'Добавить мероприятие':
@@ -72,37 +214,23 @@ async def receive_message(message: Message, state: FSMContext):
                 await state.set_state(CreateEvent.name_state)
             case 'Удалить мероприятие':
                 pass
+            case 'Изменить мероприятие':
+                pass
+            case 'Добавление администратора':
+                token = generate_token(message.from_user.username)
+                with open('admin_tokens.txt') as file:
+                    text = file.read()
+                    if len(text) > 0:
+                        text += ',' + token
+                    else:
+                        text = token
+                    file.write(text)
+                message_text = (f'Ваш токен:\n{token}\nПередайте его тому, кого хотите сделать администратором. '
+                                'Он должен использовать команду /admin с вашим токеном. Токен действует только один раз.')
+                buttons = [[KeyboardButton(text='Назад')]]
 
         if message_text is not None:
             if buttons is not None:
                 await bot.send_message(message.chat.id, message_text, reply_markup=ReplyKeyboardMarkup(keyboard=buttons))
             else:
                 await bot.send_message(message.chat.id, message_text, reply_markup=None)
-
-@dp.message(CreateEvent.name_state)
-async def get_event_name(message: Message, state: FSMContext):
-    if message.text == 'Назад':
-        await state.set_state(None)
-        await show_menu(message.chat.id)
-    else:
-        await state.update_data(event_name=message.text)
-        await bot.send_message(message.chat.id, 'Введите описание мероприятия.')
-        await state.set_state(CreateEvent.description_state)
-
-@dp.message(CreateEvent.description_state)
-async def get_event_description(message: Message, state: FSMContext):
-    if message.text == 'Назад':
-        await state.set_state(None)
-        await show_menu(message.chat.id)
-    else:
-        await state.update_data(event_name=message.text)
-        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия.')
-        await state.set_state(CreateEvent.time_state)
-
-@dp.message(CreateEvent.time_state)
-async def get_event_time(message: Message, state: FSMContext):
-    if message.text == 'Назад':
-        await state.set_state(None)
-        await show_menu(message.chat.id)
-    else:
-        await state.set_state(None)
