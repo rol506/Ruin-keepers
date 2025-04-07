@@ -31,6 +31,21 @@ div.mainmenu div a {
   font-size: 1.25rem;
 }
 
+.logoText {
+  font-size: 3rem;
+  position: absolute;
+  padding-top: 10px;
+  font-weight: bolder;
+}
+
+.logoTextSec {
+  top: 6rem;
+}
+
+img.logo {
+  width: 8rem;
+}
+
 @media screen and (max-width: 600px)
 {
   div.mainmenu div a {
@@ -40,8 +55,91 @@ div.mainmenu div a {
   div.mainmenu div:not(div.mainmenu div:first-child) {
     padding-left: 1.5rem;
   }
+
+  .logoText {
+    font-size: 1.5rem;
+  }
+
+  .logoTextSec {
+    top: 5rem;
+  }
+
+  img.logo {
+    width: 5rem;
+  }
 }
 
+div.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+form.login {
+  margin-top: 20px;
+  background: #47695B;
+  padding: 5px;
+  padding-top: 1px;
+  border-radius: 16px;
+  font-family: "Unbounded";
+}
+
+form.login p.title {
+  text-align: center;
+  margin: 0;
+  color: white;
+  font-weight: bolder;
+  font-size: 2rem;
+}
+
+form.login p {
+  margin: 10px 0 2px 0;
+}
+
+form.login div {
+  background: white;
+  padding: 5px 32px;
+  border-radius: 16px;
+}
+
+form.login input:not(input[type="submit"]):focus
+{
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid black;
+}
+
+form.login input:not(input[type="submit"])
+{
+  padding: 2px;
+  border-radius: 4px;
+  border: 1px solid black;
+  transition: 0.1s ease-out all;
+  width: 100%;
+}
+
+form.login div input[type="submit"]
+{
+  padding: 10px 20px;
+  border-radius: 4px;
+  color: black;
+  font-weight: bolder;
+  font-size: 2rem;
+  border: none;
+  margin: 20px 0px;
+  background: #7CE8E6;
+  transition: 0.1s ease-out all;
+  width: 100%;
+}
+
+form.login div input[type="submit"]:hover {
+  background: #61b0ae;
+}
+
+form.login div input[type="submit"]:active {
+  background: #4b8280;
+}
 
 a.anim-header {
   position: relative;
