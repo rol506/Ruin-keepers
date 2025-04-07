@@ -19,10 +19,10 @@ menu = [
             "title": "Вход/Регистрация",
             "url": "/login"
         },
-        {
-            "title": "Запись",
-            "url": "/create"
-        } 
+        #{
+        #    "title": "Запись",
+        #    "url": "/create"
+        #} 
 ]
 
 @app.route("/")
@@ -31,6 +31,16 @@ menu = [
 def index():
 
     return render_template("index.html", menu=menu)
+
+@app.errorhandler(404)
+def error_404(error):
+     
+    return render_template("error_404.html", menu=menu)
+
+@app.route("/login")
+def login():
+
+    return render_template("login.html", menu=menu)
 
 if __name__ == "__main__":
     app.run("0.0.0.0", port=4221, debug=app.config.get("DEBUG"))
