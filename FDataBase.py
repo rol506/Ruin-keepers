@@ -1,28 +1,75 @@
-import pygsheets 
+import sqlite3
 
 class FDataBase:
-    def __init__(self, service_account_file):
-        self.client:pygsheets.Client = pygsheets.authorize(service_account_file=service_account_file)
-        self.spreadsht = self.client.open("database")
-        self.worksht = self.spreadsht.worksheet("title", "Sheet1")
-        self.lastid=2
-    def createDB(self):
-        headers = [
-        "ID","Who", "Phone", "Source", "Total", "Age", "Children", "XP", "New", "Prepayment", "Destination", "Comment", "Lunch", "Reminder", "Confirmation", "Balance", "Nickname", "Feedback"
-        ]
-        for i in range(len(headers)):
-            col_letter = chr(65 + i)
-            cell = f"{col_letter}1"
-            self.worksht.update_value(cell, headers[i])
-    def dropDB(self):
-        self.worksht.clear()
-    def insert(self, Who, Phone, Source, Total, Age, Children, XP, New, Prepayment, Comment, Lunch, Reminder, Confirmation, Balance, Destination, Nickname, Feedback):
-        Id = self.lastid
-        self.lastid+=1
-    def find(self):
-        Id = self.lastid
-        self.lastid+=1
-        
-if __name__ == "__main__":
-    db = FDataBase("ruin-keepers.json")
-    db.createDB()
+    def __init__(self, db: sqlite3.Connection):
+        self.__db = db
+        self.__cur = self.__db.cursor()
+
+    def addEvent(self, name, description, photoPath, place, cost: int):
+        sql = """INSERT INTO events (name, description, photoPath, place, cost) VALUES (?, ?, ?, ?, ?)"""
+        try:
+            self.__cur.execute(sql, (name, description, photoPath, place, cost))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to add event to database:", str(e))
+
+    def getEventByName(self, name):
+        sql = f"""SELECT * FROM events WHERE name = '{name}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchon()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get event by name:", str(e))
+        return {}
+
+    def getEventById(self, id):
+        sql = f"""SELECT * FROM events WHERE id = '{id}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchone()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get event by id:", str(e))
+        return {}
+
+    def getEvents(self):
+        sql = """SELECT * FROM events"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get all events:", str(e))
+        return []
+
+    def addUser(self, eventID, name, telegram, phone, birth):
+        #if (telegram)
+        sql = """INSERT INTO users(eventID, name, phone, birth, telegram) VALUES (?, ?, ?, ?, ?)"""
+        #else:
+            #sql = """INSERT INTO users(eventID, name, phone, birth) VALUES (?, ?, ?, ?)"""
+        try:
+            self.__cur.execute(sql, (eventID, name, phone, birth, telegram))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to add user:", str(e))
+
+    def getUserByLogin(self, login):
+        sql = f"""SELECT * FROM users WHERE login='{login}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get user by login:", str(e))
+        return []
+
+    def getUserById(self, id):
+        sql = f"""SELECT * FROM users WHERE id = '{id}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchone()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get user by id:", str(e))
+        return {}
