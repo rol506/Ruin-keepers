@@ -1,14 +1,20 @@
 # Importing required library 
 import pygsheets 
 
-# Create the Client 
-# Enter the name of the downloaded KEYS 
-# file in service_account_file 
-client = pygsheets.authorize(service_account_file="ruin-keepers-f8e11e9c1f47.json") 
+class FDataBase:
+    def __init__(self, service_account_file):
+        self.client:pygsheets.Client = pygsheets.authorize(service_account_file=service_account_file)
+        self.spreadsht = self.client.open("database")
+        self.worksht = self.spreadsht.worksheet("title", "Sheet1")
+    def createDB(self):
+        headers = [
+        "Who", "Phone", "Source", "Total", "Age", "Children", "XP", "New", "Prepayment", "Destination", "Comment", "Lunch", "Reminder", "Confirmation", "Balance", "Destination", "Nickname", "Feedback"
 
-# Sample command to verify successful 
-# authorization of pygsheets 
-# Prints the names of the spreadsheet 
-# shared with or owned by the service 
-# account 
-print(client.spreadsheet_titles()) 
+        ]
+        col_letter = chr(65 + i)  # Преобразуем 0 -> 'A', 1 -> 'B', ...
+        cell = f"{col_letter}1"
+        self.update_value(cell, headers[i])
+        self.format(cell, {"textFormat": {"bold": True}})
+if __name__ == "__main__":
+    db = FDataBase("ruin-keepers.json")
+    db.createDB()
