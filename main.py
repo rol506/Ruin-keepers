@@ -21,7 +21,7 @@ class CreateEvent (StatesGroup):
     description_state = State()
     time_state = State()
 
-@dp.message(Command("start"))
+@dp.message(Command("start"), StateFilter(None))
 async def cmd_start(message: Message):
     if False: # если чел не зареган
         message_text = ('Здравствуйте! Это бот независимой организации "Хранители Руин". Через него менеджеры могут '
@@ -70,6 +70,7 @@ async def receive_message(message: Message, state: FSMContext):
                 pass
             case 'Добавить мероприятие':
                 message_text = 'Введите название мероприятия.'
+                buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(CreateEvent.name_state)
             case 'Удалить мероприятие':
                 pass
@@ -82,19 +83,31 @@ async def receive_message(message: Message, state: FSMContext):
 
 @dp.message(CreateEvent.name_state)
 async def get_event_name(message: Message, state: FSMContext):
-    await state.update_data(event_name=message.text)
-    await bot.send_message(message.chat.id, 'Введите описание мероприятия.')
-    await state.set_state(CreateEvent.description_state)
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(event_name=message.text)
+        await bot.send_message(message.chat.id, 'Введите описание мероприятия.')
+        await state.set_state(CreateEvent.description_state)
 
 @dp.message(CreateEvent.description_state)
 async def get_event_description(message: Message, state: FSMContext):
-    await state.update_data(event_name=message.text)
-    await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия.')
-    await state.set_state(CreateEvent.time_state)
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.update_data(event_name=message.text)
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия.')
+        await state.set_state(CreateEvent.time_state)
 
 @dp.message(CreateEvent.time_state)
 async def get_event_time(message: Message, state: FSMContext):
-    await state.set_state(None)
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message.chat.id)
+    else:
+        await state.set_state(None)
 
 async def main():
     await dp.start_polling(bot)
