@@ -30,6 +30,7 @@ menu = [
         #    "title": "Запись",
         #    "url": "/create"
         #} 
+        
 ]
 
 def connect_db():
