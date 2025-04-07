@@ -1,4 +1,3 @@
-# Importing required library 
 import pygsheets 
 
 class FDataBase:
@@ -12,10 +11,11 @@ class FDataBase:
 
         ]
         for i in range(len(headers)):
-            col_letter = chr(65 + i)  # Преобразуем 0 -> 'A', 1 -> 'B', ...
+            col_letter = chr(65 + i)
             cell = f"{col_letter}1"
             self.worksht.update_value(cell, headers[i])
-            self.worksht.format(cell, {"textFormat": {"bold": True}})
+    def dropDB(self):
+        а=0
 if __name__ == "__main__":
     db = FDataBase("ruin-keepers.json")
     db.createDB()
