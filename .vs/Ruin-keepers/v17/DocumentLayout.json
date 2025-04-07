@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -33,6 +33,10 @@
               "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "flsite.py",
@@ -40,7 +44,7 @@
               "RelativeDocumentMoniker": "flsite.py",
               "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py",
               "RelativeToolTip": "flsite.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2025-04-07T20:37:41.727Z",
               "EditorCaption": ""
@@ -55,8 +59,7 @@
               "RelativeToolTip": "templates\\walks.html",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-07T20:22:21.002Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-07T20:22:21.002Z"
             },
             {
               "$type": "Document",
@@ -68,10 +71,6 @@
               "RelativeToolTip": "main.py",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2025-04-07T20:21:59.682Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

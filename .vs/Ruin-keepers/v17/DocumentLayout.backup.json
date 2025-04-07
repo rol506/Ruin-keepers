@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:flsite.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\walks.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\walks.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -18,34 +22,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "walks.html",
-              "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\walks.html",
-              "RelativeDocumentMoniker": "templates\\walks.html",
-              "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\walks.html",
-              "RelativeToolTip": "templates\\walks.html",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-07T20:22:21.002Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "main.py",
-              "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\main.py",
-              "RelativeDocumentMoniker": "main.py",
-              "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\main.py",
-              "RelativeToolTip": "main.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2025-04-07T20:21:59.682Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
@@ -57,6 +35,42 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "flsite.py",
+              "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py",
+              "RelativeDocumentMoniker": "flsite.py",
+              "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py",
+              "RelativeToolTip": "flsite.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-04-07T20:37:41.727Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "walks.html",
+              "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\walks.html",
+              "RelativeDocumentMoniker": "templates\\walks.html",
+              "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\walks.html",
+              "RelativeToolTip": "templates\\walks.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-04-07T20:22:21.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "main.py",
+              "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\main.py",
+              "RelativeDocumentMoniker": "main.py",
+              "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\main.py",
+              "RelativeToolTip": "main.py",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-04-07T20:21:59.682Z"
             }
           ]
         }
