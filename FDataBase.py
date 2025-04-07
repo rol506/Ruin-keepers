@@ -15,7 +15,9 @@ class FDataBase:
             cell = f"{col_letter}1"
             self.worksht.update_value(cell, headers[i])
     def dropDB(self):
-        a=0
+        self.worksht.clear()
 if __name__ == "__main__":
     db = FDataBase("ruin-keepers.json")
     db.createDB()
+    print(db.client.spreadsheet_titles())
+    db.dropDB()
