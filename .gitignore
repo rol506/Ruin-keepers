@@ -7,3 +7,4 @@ pyvenv.cfg
 SETTINGS.py
 __pycache__
 .vs/Ruin-keepers/FileContentIndex/
+ruin-keepers.json

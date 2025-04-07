@@ -1,18 +1,14 @@
-import pygsheets
-import numpy as np
+# Importing required library 
+import pygsheets 
 
-gc = pygsheets.authorize()
+# Create the Client 
+# Enter the name of the downloaded KEYS 
+# file in service_account_file 
+client = pygsheets.authorize(service_account_file="ruin-keepers-f8e11e9c1f47.json") 
 
-# Open spreadsheet and then worksheet
-sh = gc.open('my new sheet')
-wks = sh.sheet1
-
-# Update a cell with value (just to let him know values is updated ;) )
-wks.update_value('A1', "Hey yank this numpy array")
-my_nparray = np.random.randint(10, size=(3, 4))
-
-# update the sheet with array
-wks.update_values('A2', my_nparray.tolist())
-
-# share the sheet with your friend
-sh.share("myFriend@gmail.com")
+# Sample command to verify successful 
+# authorization of pygsheets 
+# Prints the names of the spreadsheet 
+# shared with or owned by the service 
+# account 
+print(client.spreadsheet_titles()) 
