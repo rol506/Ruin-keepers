@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request, url_for, redirect
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
@@ -16,8 +16,12 @@ menu = [
         },
         {
             "title": "Мероприятия",
-            "url": "/events"
+            "url": "/events/events"
         },
+        {
+            "title": "Прогулки",
+            "url": "/events/walks"
+        }
         #{
         #    "title": "Вход/Регистрация",
         #    "url": "/login"
@@ -46,7 +50,7 @@ def get_db():
     return g.link_db
 
 @app.teardown_appcontext
-def close_db():
+def close_db(error):
     if hasattr(g, "link_db"):
         g.link_db.close()
 
@@ -56,10 +60,26 @@ def close_db():
 def index():
     return render_template("index.html", menu=menu)
 
-@app.route("/events")
+#@app.route("/events")
+#def event_choose():
+    #db = FDataBase(get_db())
+    #return render_template("event_choose.html", menu=menu, title="мероприятия")
+
+@app.route("/events/events/register", methods=["POST", "GET"])
+def register_event():
+    return render_template("register_event.html", menu=menu)
+
+@app.route("/events/events", methods=["POST", "GET"])
 def events():
-    db = FDataBase(get_db())
-    return render_template("events.html", menu=menu, title="мероприятия")
+
+    if request.method == "POST":
+        return redirect(url_for("register_event"))
+
+    return render_template("events.html", menu=menu)
+
+@app.route("/events/walks")
+def walks():
+    return render_template("walks.html", menu=menu)
 
 @app.errorhandler(404)
 def error_404(error): 
