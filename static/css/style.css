@@ -119,7 +119,7 @@ form.login input:not(input[type="submit"])
   width: 100%;
 }
 
-form.login div input[type="submit"]
+form.login div input[type="submit"], input[type="submit"]
 {
   padding: 10px 20px;
   border-radius: 4px;
@@ -133,11 +133,11 @@ form.login div input[type="submit"]
   width: 100%;
 }
 
-form.login div input[type="submit"]:hover {
+form.login div input[type="submit"]:hover, input[type="submit"]:hover {
   background: #61b0ae;
 }
 
-form.login div input[type="submit"]:active {
+form.login div input[type="submit"]:active, input[type="submit"]:active {
   background: #4b8280;
 }
 
