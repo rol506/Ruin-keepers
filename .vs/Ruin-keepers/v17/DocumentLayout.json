@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:flsite.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\templates\\base.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -58,8 +58,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 11,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 4,
@@ -153,26 +165,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "style.css",
               "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\static\\css\\style.css",
               "RelativeDocumentMoniker": "static\\css\\style.css",
               "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\static\\css\\style.css",
               "RelativeToolTip": "static\\css\\style.css",
-              "ViewState": "AgIAAM4AAAAAAAAAAAAAACQBAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAM4AAAAAAAAAAAAAANwAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-04-07T21:44:33.734Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "flsite.py",
               "DocumentMoniker": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py",
               "RelativeDocumentMoniker": "flsite.py",
               "ToolTip": "C:\\Users\\Lev\\source\\repos\\Ruin-keepers\\flsite.py",
               "RelativeToolTip": "flsite.py",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAAAEwAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAAAGEAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2025-04-07T21:43:03.283Z",
               "EditorCaption": ""
