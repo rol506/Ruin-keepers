@@ -60,3 +60,4 @@ flask
 chardet
 gspread
 oauth2client
+uvicorn
