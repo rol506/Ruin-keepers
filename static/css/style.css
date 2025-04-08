@@ -5,9 +5,10 @@
 html, body {
   padding: 0;
   margin: 0;
-  overflow: scroll;
+  overflow-y: scroll;
   width: 100vw;
   scroll-behavior: smooth;
+  overflow-x:hidden;
 }
 
 div.mainmenu {
@@ -22,7 +23,7 @@ div.mainmenu {
   min-width: 100vw;
 }
 
-div.mainmenu div:not(div.mainmenu div:first-child) {
+div.mainmenu div:not(div.mainmenu, div:first-child) {
   padding-left: 2.5rem;
 }
 
@@ -432,7 +433,7 @@ div.flash-info p {
     font-size: 1rem;
   }
 
-  div.mainmenu div:not(div.mainmenu div:first-child) {
+  div.mainmenu div:not(div.mainmenu, div:first-child) {
     padding-left: 1.5rem;
   }
 
@@ -460,3 +461,194 @@ div.flash-info p {
     font-size: 1rem;
   }
 }
+
+
+
+
+/*МОЁ*/
+
+
+
+
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 2rem;
+}
+
+h1, h2 {
+    font-weight: bold;
+
+}
+
+.about p {
+    margin-bottom: 1em;
+    font-size: 1.2em;
+}
+
+.photo-section {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+    .photo-section img {
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+.caption {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.social {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+.social-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    justify-content: right;
+
+}
+
+.social-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+}
+
+/* Если захочешь отдельно настроить VK / Telegram иконки */
+.vk-icon {
+    /* можно задать, например, другой размер или цвет фона */
+    width: 100px;
+    height: 100px;
+}
+
+.tg-icon {
+    /* или чуть меньше/больше иконку телеги */
+    width: 100px;
+    height: 100px;
+}
+
+.social-btn {
+    background: linear-gradient(90deg, #aef1f1, #7ce6e6);
+    padding: 12px 16px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s ease;
+    width: 40%;
+    max-width: 400px;
+    font-size: 1.5em;
+}
+
+    .social-btn:hover {
+        background: linear-gradient(90deg, #8cdada, #56d0d0);
+    }
+
+.heart {
+    font-size: 22px;
+    color: #1a1a1a;
+}
+ 
+
+
+.donate-btn {
+    display: inline-block;
+    background: #aef1f1;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+    font-size: 1.5em;
+
+}
+
+    .donate-btn:hover {
+        background: #8cdada;
+    }
+
+
+/* Существующий код остаётся */
+
+.slider {
+    position: relative;
+    width: 700px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+    .slider img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .slider .caption {
+        display: block;
+        margin-top: 0.5em;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .slider button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-59%);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0 10px;
+        border-radius: 5px;
+    }
+
+    .slider .prev {
+        left: -40px;
+    }
+
+    .slider .next {
+        right: -40px;
+    }
+    .social, .donate {
+        width: 70vw;
+
+    }
+.media-link {
+    display: flex;
+    align-items: center;
+    margin-top: 32px;
+    gap: 16px;
+}
+
+.media-icon {
+    width: 250px;
+    height: 250px;
+}
+
+.media-text {
+    font-weight: 800;
+    font-size: 1.5em;
+    color: #000;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.3s ease;
+}
+
+    .media-text:hover {
+        color: #555;
+    }
