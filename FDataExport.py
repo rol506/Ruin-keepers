@@ -56,5 +56,5 @@ def FDataExport():
         export_table(table_name, data, i)
 
     print("✅ Экспорт завершён!")
-if "__name__" == "__main__":
+if __name__ == "__main__":
     FDataExport()
