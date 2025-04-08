@@ -438,17 +438,18 @@ async def get_user_birth_change(message: Message, state: FSMContext):
 
 # endregion
 
-# ПРИМЕЧАНИЕ: не уверен что уместно делать список через FSM, проще сразу всё пихнуть внутрь главного match'a
 # region Вывод списка участников
 
 class ViewUsers(StatesGroup):
     show = State()
 
 @dp.callback_query(ViewUsers.show)
-async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, message: Message):
-    if message.text == 'Назад':
+async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, message: Message = None):
+    if message is not None and message.text == 'Назад':
         await state.set_state(None)
         await show_menu(message)
+        return
+
     data = await state.get_data()
     users = data.get("users", [])
     index = data.get("index", 0)
@@ -458,18 +459,33 @@ async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, mes
         await state.clear()
         return
 
-    # Определяем направление
     if callback.data.startswith("prev_"):
         index = max(0, int(callback.data.split("_")[1]))
     elif callback.data.startswith("next_"):
-        index = min(len(users) - 1, int(callback.data.split("_")[1]))
+        index = min((len(users) - 1) // 3, int(callback.data.split("_")[1]))
     else:
         await callback.answer("Некорректная кнопка.")
         return
 
     await state.update_data(index=index)
-    user = users[index]
+    user = users[index * 3]
 
+    text = await get_user_data(user)
+    for i in range(index * 3 + 1, min(index * 3 + 3, len(users))):
+        text += '\n\n' + await get_user_data(users[i])
+
+    buttons = []
+    if index > 0:
+        buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
+    if (index + 1) * 3 < len(users):
+        buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
+
+    await callback.message.edit_text(text, reply_markup=keyboard)
+    await callback.answer()
+
+async def get_user_data(user):
     text = (
         f"🆔 ID: {user['id']}\n"
         f"👤 ФИО: {user['name']}\n"
@@ -478,17 +494,8 @@ async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, mes
         f"📬 Telegram: {user['telegram'] or '—'}\n"
         f"🗓️ ID мероприятия: {user['eventID']}"
     )
+    return text
 
-    buttons = []
-    if index > 0:
-        buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
-    if index < len(users) - 1:
-        buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
-
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
-
-    await callback.message.edit_text(text, reply_markup=keyboard)
-    await callback.answer()
 # endregion
 
 # endregion
@@ -647,20 +654,16 @@ async def receive_message(message: Message, state: FSMContext):
                 await state.update_data(users=users, index=0)
 
                 user = users[0]
-                text = (
-                    f"🆔 ID: {user['id']}\n"
-                    f"👤 ФИО: {user['name']}\n"
-                    f"📞 Телефон: {user['phone']}\n"
-                    f"🎂 Дата рождения: {user['birth']}\n"
-                    f"📬 Telegram: {user['telegram'] or '—'}\n"
-                )
-                buttons = []
-                if len(users) > 1:
-                    buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
-                keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else [])  # Передаем пустой список, если кнопок нет
+                text = await get_user_data(user)
+                for i in range(1, min(3, len(users))):
+                    text += '\n\n' + await get_user_data(users[i])
+
+                inline_buttons = []
+                if len(users) > 3:
+                    inline_buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
+                keyboard = InlineKeyboardMarkup(inline_keyboard=[inline_buttons] if inline_buttons else [])  # Передаем пустой список, если кнопок нет
                 
                 await bot.send_message(message.chat.id, text, reply_markup=keyboard)
-
 
         if message_text is not None:
             if buttons is not None:
