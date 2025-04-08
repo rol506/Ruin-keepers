@@ -2,7 +2,7 @@ import sqlite3
 import pygsheets
 
 # Подключение к базе SQLite
-conn = sqlite3.connect("your_database.db")
+conn = sqlite3.connect("flsite.db")
 cur = conn.cursor()
 
 gc = pygsheets.authorize("ruin-keepers.json")
