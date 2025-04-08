@@ -58,3 +58,5 @@ yarl==1.19.0
 yookassa==3.5.0
 flask
 chardet
+gspread
+oauth2client

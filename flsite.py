@@ -74,7 +74,8 @@ def process_request(name, birth, telegram, phone, eventID):
     return redirect(url_for("index"))
 
 @app.route("/events/events/register", methods=["POST", "GET"])
-def register_event():
+@app.route("/events/events/register/<eventID>", methods=["POST", "GET"])
+def register_event(eventID=None):
 
     if request.method == "POST":
         name = request.form.get("name")
@@ -92,7 +93,7 @@ def register_event():
 
     db = FDataBase(get_db())
 
-    return render_template("register.html", menu=menu, events=db.getEvents())
+    return render_template("register.html", menu=menu, events=db.getEvents(), eventID=eventID)
 
 @app.route("/events/events", methods=["POST", "GET"])
 def events():
@@ -104,8 +105,12 @@ def events():
 
     return render_template("events.html", menu=menu, events=db.getEvents())
 
-@app.route("/events/day/<day>")
+@app.route("/events/day/<day>", methods=["POST", "GET"])
 def eventsByDay(day):
+
+    if request.method == "POST":
+        id = request.form.get("id")
+        return redirect(url_for("register_event", eventID=id))
 
     if (int(day) < 10):
         day = "0"+str(day)
@@ -114,7 +119,7 @@ def eventsByDay(day):
     date += day
     db = FDataBase(get_db())
     events = db.getEventsByDate(date)
-    return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=50)
+    return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=0)
 
 @app.route("/events/walks", methods=["POST", "GET"])
 def walks():
