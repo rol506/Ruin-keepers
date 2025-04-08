@@ -23,7 +23,6 @@ menu = [
             "title": "Галерея",
             "url": "/events/gallery"
         }
-
 ]
 
 def getSliderPaths(configFileName):
@@ -120,7 +119,7 @@ def register_event(eventID=None):
         telegram = request.form.get("telegram")
         phone = request.form.get("phone")
 
-        eventID = request.form.get("eventID")
+        eventID = request.form.get("eventID") if eventID is None else eventID
 
         if eventID == "None":
             flash("Пожалуйста выберите мероприятие", "info")
@@ -158,7 +157,8 @@ def register_event(eventID=None):
 def events():
 
     if request.method == "POST":
-        return redirect(url_for("register_event"))
+        evID = request.form.get("id")
+        return redirect(url_for("register_event", eventID=evID))
 
     db = FDataBase(get_db())
 
