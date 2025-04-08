@@ -594,10 +594,21 @@ async def generate_token(username):
     time_token = str(hash(time.time())) + str(hash(username))
     return token + time_token
 
-async def parse_date(date):
+async def parse_date(date, current_year: bool = False):
     try:
         date = date.split('.')
-        day, month, year = map(int, date)
+        if len(date) == 3:
+            day, month, year = map(int, date)
+        else:
+            day, month = map(int, date)
+            now = datetime.datetime.now()
+            if month < now.month:
+                year = now.year + 1
+            else:
+                if month == now.month and day < now.day:
+                    year = now.year + 1
+                else:
+                    year = now.year
         return str(datetime.date(year, month, day))
     except:
         return None
