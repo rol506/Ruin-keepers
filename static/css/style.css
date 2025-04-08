@@ -44,6 +44,7 @@ div.footer {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  margin-top: max(50vh, 40px);
 }
 
 .logoText {
@@ -66,9 +67,10 @@ table.calendar {
 }
 
 table.calendar td {
-  padding: 15px;
-  border-radius: 64px;
+  padding: 10px;
+  border-radius: 32px;
   text-align: center;
+  font-family: "Unbounded";
 }
 
 table.calendar td.not-current {
@@ -91,6 +93,7 @@ table.calendar thead {
 }
 
 .calendar-wrapper button {
+  z-index: 101;
   color: black;
   font-size: 3rem;
   background: none;
@@ -132,7 +135,6 @@ div.container {
 form.login {
   margin-top: 20px;
   background: #47695B;
-  align-items: center;;
   padding: 5px;
   padding-top: 1px;
   border-radius: 16px;
@@ -237,6 +239,7 @@ a.anim {
   text-decoration: none;
   color: #000;
   text-decoration: none;
+  font-family: "Unbounded";
 }
 
 a.anim::before {
@@ -285,6 +288,7 @@ a.anim-grey {
   text-decoration: none;
   color: grey;
   text-decoration: none;
+  font-family: "Unbounded";
 }
 
 a.anim-grey::before {
@@ -326,6 +330,7 @@ div.flash-info {
   padding: 10px;
   position: relative;
   margin: 10px;
+  z-index: 101;
 }
 
 div.flash-info p {
@@ -337,7 +342,6 @@ div.flash-info p {
     margin: auto;
     padding: 2rem;
     font-family: sans-serif;
-    min-height: 100vh;
 }
 
 .route-section {
@@ -476,45 +480,6 @@ div.flash-info p {
         .gallery-controls button:hover {
             background-color: #444;
         }
-
-@media screen and (max-width: 600px)
-{
-  div.mainmenu div a {
-    font-size: 1rem;
-  }
-
-  div.mainmenu div:not(div.mainmenu, div:first-child) {
-    padding-left: 1.5rem;
-  }
-
-  .logoText {
-    font-size: 1.5rem;
-  }
-
-  .logoTextSec {
-    top: 5rem;
-  }
-
-  img.logo {
-    width: 5rem;
-  }
-
-  table.calendar td {
-    padding: 7.5px;
-  }
-
-  table.calendar {
-    font-size: 1rem;
-  }
-
-  input[type="submit"] {
-    font-size: 1rem;
-  }
-
-  div.footer {
-    font-size: 0.75rem;
-  }
-}
 
 .container {
     max-width: 900px;
@@ -688,7 +653,51 @@ h1, h2 {
     transition: color 0.3s ease;
 }
 
-    .media-text:hover {
-        color: #555;
-    }
+.media-text:hover {
+  color: #555;
+}
+
+@media screen and (max-width: 600px)
+{
+  div.mainmenu div a {
+    font-size: 1rem;
+  }
+
+  div.mainmenu div:not(div.mainmenu, div:first-child) {
+    padding-left: 1.5rem;
+  }
+
+  .logoText {
+    font-size: 1.5rem;
+  }
+
+  .logoTextSec {
+    top: 5rem;
+  }
+
+  img.logo {
+    width: 5rem;
+  }
+
+  table.calendar td {
+    padding: 7.5px;
+  }
+
+  table.calendar {
+    font-size: 1rem;
+  }
+
+  input[type="submit"] {
+    font-size: 1rem;
+  }
+
+  div.footer {
+    font-size: 0.75rem;
+  }
+
+  .social-btn {
+    font-size: 0.75rem;
+  }
+}
+
 
