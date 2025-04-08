@@ -22,6 +22,10 @@ menu = [
         {
             "title": "Прогулки",
             "url": "/events/walks"
+        },
+        {
+            "title": "Галерея",
+            "url": "/events/gallery"
         }
 ]
 
@@ -115,6 +119,19 @@ def eventsByDay(day):
 @app.route("/events/walks", methods=["POST", "GET"])
 def walks():
     return render_template("walks.html", menu=menu)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.errorhandler(404)
 def error_404(error): 
