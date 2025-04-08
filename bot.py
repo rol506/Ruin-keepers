@@ -127,8 +127,8 @@ async def get_event_id_delete(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
-                db.removeEventById(message.text)
+            if db.getEventByID(message.text):
+                db.removeEventByID(message.text)
                 await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Мероприятие успешно удалено.')
                 await show_menu(message)
@@ -157,7 +157,7 @@ async def get_event_id_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
+            if db.getEventByID(message.text):
                 await state.set_state(ChangeEvent.name_state)
                 await state.update_data(event_id=message.text)
                 await bot.send_message(message.chat.id, 'Введите название мероприятия. (Введите точку, чтобы оставить прежним)')
@@ -285,7 +285,7 @@ async def get_user_event(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
+            if db.getEventByID(message.text):
                 await state.update_data(user_event=int(message.text))
                 await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя.')
                 await state.set_state(RegisterUser.telegram_state)
@@ -345,8 +345,8 @@ async def get_user_id_delete(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getUserById(message.text):
-                db.removeUserById(message.text)
+            if db.getUserByID(message.text):
+                db.removeUserByID(message.text)
                 await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Запись успешно удалена.')
                 await show_menu(message)
@@ -374,7 +374,7 @@ async def get_user_id_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getUserById(int(message.text)):
+            if db.getUserByID(int(message.text)):
                 await state.update_data(user_id=int(message.text))
                 await bot.send_message(message.chat.id,
                                        'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя. '
@@ -437,6 +437,30 @@ async def get_user_birth_change(message: Message, state: FSMContext):
 
 # endregion
 
+# region Вывод списка участников
+class ViewUsers(StatesGroup):
+    show = State()
+
+@dp.message(ViewUsers.show)
+async def show_users(message: Message, state: FSMContext):
+    users = db.getUsers()
+    if not users:
+        await bot.send_message(message.chat.id, "Нет зарегистрированных пользователей.")
+    else:
+        for user in users:
+            text = (
+                f"🆔 ID: {user['id']}\n"
+                f"👤 ФИО: {user['name']}\n"
+                f"📞 Телефон: {user['phone']}\n"
+                f"🎂 Дата рождения: {user['birth']}\n"
+                f"📬 Telegram: {user['telegram'] or '—'}\n"
+                f"🗓️ ID мероприятия: {user['eventID']}"
+            )
+            await bot.send_message(message.chat.id, text)
+    await state.set_state(None)
+    await show_menu(message)
+
+# endregion
 async def verify_admin(token):
     with open('admin_token.txt', 'r+') as file:
         file_token = file.read()
@@ -531,6 +555,7 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Записать участника на мероприятие'),
                      KeyboardButton(text='Выписать участника с мероприятия'),
                      KeyboardButton(text='Изменить запись')],
+                    [KeyboardButton(text='Вывести список участников')],
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Взаимодействие со списком мероприятий':
@@ -539,6 +564,7 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Добавить мероприятие'),
                      KeyboardButton(text='Удалить мероприятие'),
                      KeyboardButton(text='Изменить мероприятие')],
+                    [KeyboardButton(text='Вывести список мероприятий')],
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Записать участника на мероприятие':
@@ -553,6 +579,10 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Введите ID записи.'
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(ChangeRegistration.id_state)
+            case 'Вывести список участников':
+                message_text = 'Выводим...'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(ViewUsers.show)
             case 'Добавить мероприятие':
                 message_text = 'Введите название мероприятия.'
                 buttons = [[KeyboardButton(text='Назад')]]

@@ -12,7 +12,7 @@
     {{super()}}
     <div class="container">
         <section class="about">
-            <h1>О нас</h1>
+            <h1 style="font-size: 2rem;">О нас</h1>
             <p>«Хранители руин» — это независимое волонтёрское движение, которое с 2020 года заботится об историческом наследии в Калининградской области, а в особенности — о руинах кирх и замков.</p>
             <p>
                 Мы считаем, что экспрессивные руины — это изюминка региона, и стремимся их сохранить и подарить им «вторую жизнь» в качестве эстетичных и благоустроенных исторических парков и площадок для мероприятий.
@@ -41,7 +41,7 @@
         </div>
 
         <section class="social">
-            <h2>Ссылки на наши соц сети:</h2>
+            <h2 style="font-size: 2rem;">Ссылки на наши соц сети:</h2>
 
             <div class="social-row">
                 <img src="{{ url_for('static', filename='images/vk-icon.png') }}" alt="VK" class="social-icon vk-icon" />
@@ -59,20 +59,13 @@
         </section>
 
         <section class="donate">
-            <h2>Донат</h2>
+            <h2 style="font-size: 2rem">Донат</h2>
             <p>А еще вы можете поддержать «Хранителей руин» пожертвованием. Мы будем рады любой сумме. Деньги мы используем для покупки инструментов и расходников для волонтерских субботников и материалов для благоустройства исторических объектов.</p>
             <a class="donate-btn" href="https://qr.nspk.ru/AS1A00342DDPHMHM8GJ844HIF8200M0J?type=01&bank=100000000284&crc=EAAD#" target="_blank">
                 Отправить донат
             </a>
         </section>
-        <div class="media-link">
-            <img src="{{ url_for('static', filename='images/media.png') }}" alt="media" class="media-icon" />
-            <a href="https://taplink.cc/ruin.keepers" target="_blank" style="font-weight: bolder; font-size: 1.5rem;" class="anim">
-                Публикации о «Хранителях руин» в медиа
-            </a>
-        </div>
-
-    </div>
+      </div>
 
     <script >
         const images = [

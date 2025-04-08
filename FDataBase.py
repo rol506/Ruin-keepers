@@ -16,7 +16,7 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
 
-    def removeEventById(self, id):
+    def removeEventByID(self, id):
 
         #remove associated users
         users = self.getUsersByEvent(id)
@@ -41,7 +41,17 @@ class FDataBase:
             print("Failed to get event by name:", str(e))
         return {}
 
-    def getEventById(self, id):
+    def getEventsByMonth(self, month):
+        sql = f"""SELECT * FROM events WHERE (date >= '{month}-01') AND (date < '{month}-31')"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get events by month:", str(e))
+        return []
+
+    def getEventByID(self, id):
         sql = f"""SELECT * FROM events WHERE id = '{id}'"""
         try:
             self.__cur.execute(sql)
@@ -71,6 +81,30 @@ class FDataBase:
             print("Failed to get all events:", str(e))
         return []
 
+    def updateEvent(self, eventID, name, description=None, date=None, time=None, photoPath=None, place=None, cost: int=None, tpe="event"):
+        """None values will not be updated"""
+        ev = self.getEventByID(eventID)
+
+        #type is reserved Python word
+
+        name = ev['name'] if name is None else name
+        description = ev['description'] if description is None else description
+        date = ev['date'] if date is None else date
+        time = ev['time'] if time is None else time
+        photoPath = ev['photoPath'] if photoPath is None else photoPath
+        place = ev['place'] if place is None else place
+        cost = ev['cost'] if cost is None else cost
+        tpe = ev['type'] if tpe is None else tpe
+
+        sql = f"""UPDATE events SET name='{name}', description='{description}', date='{date}', time='{time}', photoPath='{photoPath}',
+                                    place='{place}', cost='{cost}', type='{tpe}' WHERE id='{eventID}'"""
+
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to update event by id:", str(e))
+
     def addUser(self, eventID, name, telegram, phone, birth):
         """None values will not be updated"""
         #if (telegram)
@@ -85,7 +119,7 @@ class FDataBase:
 
     def updateUser(self, userID, name, telegram, phone, birth):
         #get last record
-        usr = self.getUserById(userID)
+        usr = self.getUserByID(userID)
 
         name = usr['name'] if name is None else name
         telegram = usr['telegram'] if telegram is None else telegram
@@ -98,26 +132,6 @@ class FDataBase:
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to update user data by id:", str(e))
-
-    def updateEvent(self, eventID, name, description, photoPath, cost, place, date, time, type='event'):
-        #get last record
-        event = self.getEventById(eventID)
-
-        name = event['name'] if name is None else name
-        description = event['description'] if description is None else description
-        photoPath = event['photoPath'] if photoPath is None else photoPath
-        cost = event['cost'] if cost is None else cost
-        place = event['place'] if place is None else place
-        date = event['date'] if date is None else date
-        time = event['time'] if time is None else time
-        type = event['type'] if type is None else type
-
-        sql = f"""UPDATE users SET name='{name}', description='{description}', photoPath='{photoPath}', cost='{cost}', place='{place}', date='{date}', time='{time}', type='{type}' WHERE id='{eventID}'"""
-        try:
-            self.__cur.execute(sql)
-            self.__db.commit()
-        except sqlite3.Error as e:
-            print("Failed to update event data by id:", str(e))
 
     def removeUserByPhone(self, phone, eventID):
         sql = f"""DELETE FROM users WHERE phone='{phone}' AND eventID='{eventID}'"""
@@ -135,7 +149,7 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to remove user by telegram:", str(e))
 
-    def removeUserById(self, userID):
+    def removeUserByID(self, userID):
         sql = f"""DELETE FROM users WHERE id='{userID}'"""
         try:
             self.__cur.execute(sql)
@@ -224,7 +238,7 @@ class FDataBase:
             print("Failed to get user by phone:", str(e))
         return []
 
-    def getUserById(self, id):
+    def getUserByID(self, id):
         sql = f"""SELECT * FROM users WHERE id = '{id}'"""
         try:
             self.__cur.execute(sql)
@@ -266,4 +280,14 @@ class FDataBase:
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to remove admin by login:", str(e))
+    def getUsers(self):
+        sql = """SELECT * FROM users"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Failed to get users:", str(e))
+        return []
 

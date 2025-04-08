@@ -3,7 +3,7 @@ from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
 from FDataBase import FDataBase
-from datetime import datetime
+import datetime
 
 app = Flask("ruinKeeper")
 app.config.update(SECRET_KEY=web_app_secret_key)
@@ -20,14 +20,9 @@ menu = [
             "url": "/events/events"
         },
         {
-            "title": "Прогулки",
-            "url": "/events/walks"
-        },
-        {
             "title": "Галерея",
             "url": "/events/gallery"
         }
-
 ]
 
 def getSliderPaths(configFileName):
@@ -100,11 +95,10 @@ def payment():
         session.clear()
         process_request()
         flash("Вы успешно зарегистрировались на мероприятие!", "info")
-        print("successfully registered (", name, ")", "for the event id ", eventID)
         return redirect(url_for("index"))
 
     db = FDataBase(get_db())
-    ev = db.getEventById(eventID)
+    ev = db.getEventByID(eventID)
 
     eventType = "Мероприятие"
 
@@ -125,7 +119,7 @@ def register_event(eventID=None):
         telegram = request.form.get("telegram")
         phone = request.form.get("phone")
 
-        eventID = request.form.get("eventID")
+        eventID = request.form.get("eventID") if eventID is None else eventID
 
         if eventID == "None":
             flash("Пожалуйста выберите мероприятие", "info")
@@ -163,14 +157,17 @@ def register_event(eventID=None):
 def events():
 
     if request.method == "POST":
-        return redirect(url_for("register_event"))
+        evID = request.form.get("id")
+        return redirect(url_for("register_event", eventID=evID))
 
     db = FDataBase(get_db())
 
-    return render_template("events.html", menu=menu, events=db.getEvents())
+    date = datetime.datetime.now().strftime("%Y-%m")
+    events = db.getEventsByMonth(date)
+    return render_template("events.html", menu=menu, events=events)
 
-@app.route("/events/day/<day>", methods=["POST", "GET"])
-def eventsByDay(day):
+@app.route("/events/day/<year>/<month>/<day>", methods=["POST", "GET"])
+def eventsByDate(year, month, day):
 
     if request.method == "POST":
         id = request.form.get("id")
@@ -179,11 +176,12 @@ def eventsByDay(day):
     if (int(day) < 10):
         day = "0"+str(day)
 
-    date = datetime.today().strftime('%Y-%m-')
-    date += day
+    if (int(month) < 10):
+        month = "0"+str(month)
+
+    date = year + "-" + month + "-" + day
     db = FDataBase(connect_db())
     events = db.getEventsByDate(date)
-    print(len(events))
     return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=0)
 
 @app.route("/events/walks", methods=["POST", "GET"])
