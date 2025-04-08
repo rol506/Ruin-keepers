@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, request_started, url_for, redirect, flash, session
+from flask import Flask, render_template, g, request, request_started, url_for, redirect, flash, session, jsonify
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
@@ -52,6 +52,33 @@ def get_db():
     if not hasattr(g, "link_db"):
         g.link_db = connect_db()
     return g.link_db
+
+@app.route("/event/get-color/day", methods=["POST", "GET"])
+def getEventColor(day):
+    if (int(day) < 10):
+        day = "0"+str(day)
+
+    date = datetime.today().strftime('%Y-%m-')
+    date += day
+    db = FDataBase(connect_db())
+    events = db.getEventsByDate(date)
+    print(len(events))
+    tpe=events[0]["type"]
+    print(tpe)
+
+    match tpe:
+        case "subb":
+            return jsonify({"color": "#01A23F"})
+        case "lection":
+            return "#D1EB0B"
+        case "walk":
+            return "#07C0BD"
+        case "rest":
+            return "#E21216"
+        case "photo":
+            return "#8729AD"
+
+    return "#07C0BD"
 
 @app.teardown_appcontext
 def close_db(error):

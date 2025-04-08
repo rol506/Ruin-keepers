@@ -34,6 +34,17 @@
         </div>
       </div>
       <script>        
+
+        function getColor(day)
+        {
+          fetch('http://127.0.0.1:4221/event/get-color/' + day).then((response) => {
+    return response.json();
+  })
+  .then((myJson) => {
+    console.log("");
+  });
+        }
+
 var Cal = function(divId) {
   this.events = [
     {% for ev in events %}
@@ -116,7 +127,7 @@ Cal.prototype.showMonth = function(y, m) {
       for(var j=0; j < firstDayOfMonth; j++) {
         if (this.currMonth -1 == chkM && this.events.includes(k))
         {
-          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + k + '">' + k + '</a></td>';
+          html += '<td class="not-current with-event" style="backrgound-color: ' + getColor(k) + '><a class="anim-grey" href="/events/day/' + k + '">' + k + '</a></td>';
         } else {
           html += '<td class="not-current">' + k + '</td>';
         }
@@ -129,14 +140,14 @@ Cal.prototype.showMonth = function(y, m) {
     if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
       if (this.events.includes(i))
       {
-        html += '<td class="today with-event"><a class="anim-accent" href="/events/day/' +i + '">'+ i + '</a></td>';
+        html += '<td class="today with-event" style="background-color: ' + getColor(i) + '><a class="anim-accent" href="/events/day/' +i + '">'+ i + '</a></td>';
       } else {
         html += '<td class="today">' + i + '</td>';
       }
     } else {
       if (this.currMonth == chkM && this.events.includes(i))
       {
-        html += '<td class="with-event"><a class="anim" href="/events/day/' + i + '">' + i + '</a></td>';
+        html += '<td class="with-event" style=background-color: ' + getColor(i) +'><a class="anim" href="/events/day/' + i + '">' + i + '</a></td>';
       } else {
         html += '<td class="normal">' + i + '</td>';
       }
