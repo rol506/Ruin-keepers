@@ -55,9 +55,18 @@ async def get_event_time(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         data = await state.get_data()
-        db.addEvent(data['event_name'], data['event_description'], data['event_date'], '12:00', 'none', 'нигде', 1000)
-        await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
-        await state.set_state(None)
+        datestr = message.text.split()
+        if len(datestr) != 2:
+            await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+        else:
+            date = parse_date(datestr[0])
+            time = parse_time(datestr[1])
+            if date is None or time is None:
+                await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+            else:
+                db.addEvent(data['event_name'], data['event_description'], date, time, 'none', 'нигде',1000)
+                await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
+                await state.set_state(None)
 
 # endregion
 
@@ -156,6 +165,14 @@ async def parse_date(date):
         date = date.split('.')
         day, month, year = map(int, date)
         return datetime.date(year, month, day)
+    except:
+        return None
+
+async def parse_time(time):
+    try:
+        time = time.split(':')
+        h, m = time
+        return datetime.time(h, m)
     except:
         return None
 
