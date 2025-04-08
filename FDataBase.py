@@ -9,9 +9,9 @@ class FDataBase:
         self.__db.close()
 
     def addEvent(self, name, description, date, time, photoPath, place, cost: int, type="event"):
-        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time) VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         try:
-            self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time))
+            self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time, type))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
