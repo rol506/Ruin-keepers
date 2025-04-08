@@ -110,7 +110,7 @@ Cal.prototype.showMonth = function(y, m) {
       for(var j=0; j < firstDayOfMonth; j++) {
         if (this.currYear == chkY && this.currMonth -1 == chkM && this.events.includes(k))
         {
-          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + (this.currMonth) + '/' + k + '">' + k + '</a></td>';
+          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + this.currYear + "/" + (this.currMonth) + '/' + k + '">' + k + '</a></td>';
         } else {
           html += '<td class="not-current">' + k + '</td>';
         }
@@ -123,14 +123,14 @@ Cal.prototype.showMonth = function(y, m) {
     if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
       if (this.events.includes(i))
       {
-        html += '<td class="today with-event"><a class="anim-accent" href="/events/day/' + (1+Number(this.currMonth)) + '/'+ i + '">'+ i + '</a></td>';
+        html += '<td class="today with-event"><a class="anim-accent" href="/events/day/' + this.currYear + "/" + (1+Number(this.currMonth)) + '/'+ i+'">'+i+'</a></td>';
       } else {
         html += '<td class="today">' + i + '</td>';
       }
     } else {
       if (this.currMonth == chkM && this.currYear == chkY && this.events.includes(i))
       {
-        html += '<td class="with-event"><a class="anim" href="/events/day/' + (1+Number(this.currMonth)) + '/' + i + '">' + i + '</a></td>';
+        html += '<td class="with-event"><a class="anim" href="/events/day/' +this.currYear + '/' + (1+Number(this.currMonth)) + '/' + i + '">' + i + '</a></td>';
       } else {
         html += '<td class="normal">' + i + '</td>';
       }
@@ -143,7 +143,7 @@ Cal.prototype.showMonth = function(y, m) {
       for(dow; dow < 7; dow++) {
         if (this.currYear == chkY && this.currMonth +1 == chkM && this.events.includes(k))
         {
-          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + (this.currMonth+2) + '/'+ k + '">' + k + '</a></td>';
+          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + this.currYear+'/'+(this.currMonth+2) + '/'+ k + '">' + k + '</a></td>';
         } else {
           html += '<td class="not-current">' + k + '</td>';
         }
