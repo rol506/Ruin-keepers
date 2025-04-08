@@ -2,7 +2,7 @@ import sqlite3
 import pygsheets
 from FDataBase import FDataBase
 
-def FDataExport():
+async def FDataExport():
 
     # === Настройки ===
     DATABASE_PATH = "flsite.db"
@@ -55,6 +55,5 @@ def FDataExport():
     for i, (table_name, data) in enumerate(tables):
         export_table(table_name, data, i)
 
-    print("✅ Экспорт завершён!")
 if "__name__" == "__main__":
     FDataExport()
