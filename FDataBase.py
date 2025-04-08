@@ -75,6 +75,22 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to add user:", str(e))
 
+    def updateUser(self, userID, name, telegram, phone, birth):
+        #get last record
+        usr = self.getUserById(userID)
+
+        name = usr['name'] if name is None else name
+        telegram = usr['telegram'] if telegram is None else telegram
+        phone = usr['phone'] if phone is None else phone
+        birth = usr['birth'] if birth is None else birth
+
+        sql = f"""UPDATE users name='{name}', telegram='{telegram}', phone='{phone}', birth='{birth}' WHERE id='{userID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to update user data by id:", str(e))
+
     def removeUserByPhone(self, phone, eventID):
         sql = f"""DELETE FROM users WHERE phone='{phone}' AND eventID='{eventID}'"""
         try:
