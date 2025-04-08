@@ -19,12 +19,9 @@
 
         <div class="gallery-container">
             <div class="gallery" id="gallery">
-                <img src="{{ url_for('static', filename='images/img1.jpg') }}" alt="Фото 1">
-                <img src="{{ url_for('static', filename='images/img2.jpg') }}" alt="Фото 2">
-                <img src="{{ url_for('static', filename='images/img3.jpg') }}" alt="Фото 3">
-                <img src="{{ url_for('static', filename='images/img4.jpg') }}" alt="Фото 4">
-                <img src="{{ url_for('static', filename='images/img5.jpg') }}" alt="Фото 5">
-                <img src="{{ url_for('static', filename='images/img6.jpg') }}" alt="Фото 6">
+              {% for s in slides %}
+                <img src="{{ url_for('static', filename=s) }}" alt="Фото">
+              {% endfor %}
             </div>
         </div>
 

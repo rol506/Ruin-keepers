@@ -3,7 +3,7 @@ from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
 from FDataBase import FDataBase
-from datetime import datetime
+import datetime
 
 app = Flask("ruinKeeper")
 app.config.update(SECRET_KEY=web_app_secret_key)
@@ -96,7 +96,6 @@ def payment():
         session.clear()
         process_request()
         flash("Вы успешно зарегистрировались на мероприятие!", "info")
-        print("successfully registered (", name, ")", "for the event id ", eventID)
         return redirect(url_for("index"))
 
     db = FDataBase(get_db())
@@ -163,10 +162,12 @@ def events():
 
     db = FDataBase(get_db())
 
-    return render_template("events.html", menu=menu, events=db.getEvents())
+    date = datetime.datetime.now().strftime("%Y-%m")
+    events = db.getEventsByMonth(date)
+    return render_template("events.html", menu=menu, events=events)
 
-@app.route("/events/day/<month>/<day>", methods=["POST", "GET"])
-def eventsByDay(month, day):
+@app.route("/events/day/<year>/<month>/<day>", methods=["POST", "GET"])
+def eventsByDate(year, month, day):
 
     if request.method == "POST":
         id = request.form.get("id")
@@ -175,11 +176,12 @@ def eventsByDay(month, day):
     if (int(day) < 10):
         day = "0"+str(day)
 
-    date = datetime.today().strftime('%Y-')
-    date += month + "-" + day
+    if (int(month) < 10):
+        month = "0"+str(month)
+
+    date = year + "-" + month + "-" + day
     db = FDataBase(connect_db())
     events = db.getEventsByDate(date)
-    print(len(events))
     return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=0)
 
 @app.route("/events/walks", methods=["POST", "GET"])

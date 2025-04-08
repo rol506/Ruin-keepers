@@ -19,7 +19,7 @@
             {% else %}
             <p>{{e.description|safe}}</p>
             {% endif %}
-            <form method="post">
+            <form method="post" action="/events/events">
               <input type="hidden" value="{{e.id}}" name="id">
               <input type="submit" value="Подать заявку на мероприятие">
             </form>

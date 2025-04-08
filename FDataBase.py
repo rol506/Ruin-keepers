@@ -41,6 +41,16 @@ class FDataBase:
             print("Failed to get event by name:", str(e))
         return {}
 
+    def getEventsByMonth(self, month):
+        sql = f"""SELECT * FROM events WHERE (date >= '{month}-01') AND (date < '{month}-31')"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get events by month:", str(e))
+        return []
+
     def getEventByID(self, id):
         sql = f"""SELECT * FROM events WHERE id = '{id}'"""
         try:
