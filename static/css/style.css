@@ -1,4 +1,4 @@
-* {
+﻿* {
   font-family: "Fira Sans", serif;
 }
 
@@ -174,7 +174,7 @@ a.anim-header:hover::before {
 a.anim {
   position: relative;
   text-decoration: none;
-  /*color: #000;*/
+  color: #000;
   text-decoration: none;
 }
 
@@ -186,12 +186,63 @@ a.anim::before {
   height: 2px;
   bottom: 0;
   left: 0;
-  /*background-color: #000;*/
+<<<<<<< HEAD
+  background-color: #000;
+=======
+>>>>>>> 4bd58f6f0b2cc3575d5f3914df1b871d54466825
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 a.anim:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-accent {
+  position: relative;
+  text-decoration: none;
+  color: #335435;
+  text-decoration: none;
+}
+
+a.anim-accent::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #335435;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-accent:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-grey {
+  position: relative;
+  text-decoration: none;
+  color: grey;
+  text-decoration: none;
+}
+
+a.anim-grey::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: grey;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-grey:hover::before {
   transform: scaleX(1);
 }
 
@@ -221,4 +272,104 @@ div.flash-info {
 
 div.flash-info p {
   text-align: center;
+}
+
+table.calendar {
+  font-size: 2rem;
+}
+
+table.calendar td {
+  padding: 15px;
+  border-radius: 64px;
+  text-align: center;
+}
+
+table.calendar td.not-current {
+  color: grey;
+}
+
+table.calendar td.with-event {
+  background: #7CE8E6;
+}
+
+table.calendar thead {
+  background: #47695B;
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-wrapper {
+  margin-bottom: 20px;
+}
+
+/*Это моё*/
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+    font-family: sans-serif;
+}
+
+.route-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    background-color: #f8f8f8;
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
+.route-text {
+    flex: 1 1 50%;
+    padding-right: 2rem;
+}
+
+    .route-text h2 {
+        font-size: 2.5rem;
+        color: #2eaf7d;
+        margin-bottom: 1rem;
+    }
+
+    .route-text p {
+        font-size: 1.2rem;
+        line-height: 1.6;
+    }
+
+.route-img {
+    flex: 1 1 40%;
+}
+
+    .route-img img {
+        width: 100%;
+        border-radius: 1rem;
+        object-fit: cover;
+    }
+/*Это моё2*/
+.topbar {
+    background-color: #2c2c38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 32px;
+}
+
+.topbar-menu {
+    display: flex;
+    gap: 60px;
+}
+
+.topbar-menu a {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.2s;
+}
+
+.topbar-menu a:hover {
+            color: #ccc;
+}
+
+
+.topbar-logo img {
+    height: 30px;
 }

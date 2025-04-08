@@ -5,13 +5,10 @@ class FDataBase:
         self.__db = db
         self.__cur = self.__db.cursor()
 
-    def __del__(self):
-        self.__db.close()
-
-    def addEvent(self, name, description, photoPath, place, cost: int):
-        sql = """INSERT INTO events (name, description, photoPath, place, cost) VALUES (?, ?, ?, ?, ?)"""
+    def addEvent(self, name, description, date, time, photoPath, place, cost: int):
+        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time) VALUES (?, ?, ?, ?, ?, ?, ?)"""
         try:
-            self.__cur.execute(sql, (name, description, photoPath, place, cost))
+            self.__cur.execute(sql, (name, description, photoPath, place, cost, date, time))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
@@ -35,6 +32,16 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to get event by id:", str(e))
         return {}
+
+    def getEventsByDate(self, date):
+        sql = f"""SELECT * FROM events WHERE date = '{date}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get events by day:", str(e))
+        return []
 
     def getEvents(self):
         sql = """SELECT * FROM events"""

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        {% for e in events %}
+          <div class="eventDesc">
+            <p><b>{{e.name}}</b> <span style="color: grey">{{e.date}}</span></p>
+            {% if e.description|length > maxlen %}
+            <p>{{e.description[:maxlen]}}...</p>
+            {% else %}
+            <p>{{e.description}}</p>
+            {% endif %}
+            <hr>
+          </div>
+        {% endfor %}
+      </div>
+    {% endblock body %}
+  </body>
+</html>
