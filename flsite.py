@@ -23,18 +23,6 @@ menu = [
             "title": "Прогулки",
             "url": "/events/walks"
         }
-<<<<<<< HEAD
-=======
-        #{
-        #    "title": "Вход/Регистрация",
-        #    "url": "/login"
-        #},
-        #{
-        #    "title": "Запись",
-        #    "url": "/create"
-        #} 
-        
->>>>>>> 4bd58f6f0b2cc3575d5f3914df1b871d54466825
 ]
 
 def connect_db():
