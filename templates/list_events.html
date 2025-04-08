@@ -13,11 +13,11 @@
       <div class="container">
         {% for e in events %}
           <div class="eventDesc">
-            <p><span style="font-size: 1.5rem; font-weight: bolder">{{e.name}}</span> <span style="color: grey">{{e.date}}</span></p>
+            <p><span style="font-size: 2rem; font-weight: bolder">{{e.name}}</span> <span style="color: grey">{{e.date}}</span></p>
             {% if maxlen > 0 and e.description|length > maxlen %}
-            <p>{{e.description[:maxlen]|safe}}...</p>
+            <p style="font-size: 1.25rem;">{{e.description[:maxlen]|safe}}...</p>
             {% else %}
-            <p>{{e.description|safe}}</p>
+            <p style="font-size: 1.25rem;">{{e.description|safe}}</p>
             {% endif %}
             <form method="post" action="/events/events">
               <input type="hidden" value="{{e.id}}" name="id">

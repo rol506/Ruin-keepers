@@ -91,6 +91,7 @@ table.calendar thead {
 
 .calendar-wrapper button:hover {
   background-color: #e3e3e3;
+  cursor: pointer;
 }
 
 .calendar-wrapper button:active {
