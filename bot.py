@@ -45,7 +45,7 @@ async def get_event_description(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(event_description=message.text)
-        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия.')
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм.')
         await state.set_state(CreateEvent.time_state)
 
 @dp.message(CreateEvent.time_state)

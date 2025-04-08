@@ -1,32 +1,36 @@
 import sqlite3
-import pygsheets
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+#coding=utf-8
+class FDataExport:
 
-# ����������� � ���� SQLite
-conn = sqlite3.connect("your_database.db")
-cur = conn.cursor()
 
-gc = pygsheets.authorize("ruin-keepers.json")
-sh = gc.open("database") 
-events_ws = sh.worksheet_by_title("Events")
-users_ws = sh.worksheet_by_title("Users")
+    # Подключение к Google Sheets
+    scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name("ruin-keepers.json", scope)
+    client = gspread.authorize(creds)
 
-events_ws.clear()
-users_ws.clear()
+# Создай или открой таблицу
+    spreadsheet = client.open("database")  # Название таблицы
+    sheet = spreadsheet.sheet1
 
-cur.execute("SELECT * FROM events")
-events = cur.fetchall()
-event_headers = [description[0] for description in cur.description]
-events_ws.update_row(1, event_headers)
-if events:
-    events_ws.update_values('A2', events)
+# Подключение к SQLite
+    conn = sqlite3.connect("flsite.db")  # Путь к базе
+    cursor = conn.cursor()
 
-cur.execute("SELECT * FROM users")
-users = cur.fetchall()
-user_headers = [description[0] for description in cur.description]
-users_ws.update_row(1, user_headers)
-if users:
-    users_ws.update_values('A2', users)
+# Пример запроса: получить все события
+    cursor.execute("SELECT * FROM events")
+    rows = cursor.fetchall()
 
-print("������ ������� ����������!")
+# Заголовки
+    column_names = [description[0] for description in cursor.description]
+    sheet.insert_row(column_names, 1)
 
-conn.close()
+    # Данные
+    for i, row in enumerate(rows, start=2):
+       sheet.insert_row(row, i)
+
+    print("Экспорт завершён.")
+
+if "__name__" == "__main__":
+   FDataExport()
