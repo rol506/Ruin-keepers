@@ -173,7 +173,7 @@ class FDataBase:
 
     def addAdmin(self, login, role: bool):
         """if role -> admin role is GreatAdmin else just admin"""
-        sql = """INSERT INTO users (login, role) VALUES (?, ?)"""
+        sql = """INSERT INTO admins (login, role) VALUES (?, ?)"""
         if (bool(role)):
             role = "GreatAdmin"
         else:
