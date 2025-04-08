@@ -28,7 +28,6 @@
       
  {% block body %}
 
-<<<<<<< Updated upstream
     {% block flash %}
     <div class="bottom">
       {% for cat, msg in get_flashed_messages(True) %}
@@ -42,35 +41,6 @@
         {% for m in menu %}
           <div>
             <a href="{{m.url}}" class="anim-header">{{m.title}}</a>
-=======
-      {% block body %}
-
-      {% block flash %}
-      <div class="bottom">
-          {% for cat, msg in get_flashed_messages(True) %}
-          <div class="flash-{{cat}}"><p>{{msg}}</p></div>
-          {% endfor %}
-
-
-
-
-
-
-
-
-
-
-      </div>
-      {% endblock flash %}
-
-      {% block mainmenu %}
-      <div class="topbar">
-          <div class="topbar-menu">
-              <a href="/home">Главная</a>
-              <a href="/events/events">Мероприятия</a>
-              <a href="/events/walks">Прогулки</a>
-              <a href="/events/gallery">Галерея</a>
->>>>>>> Stashed changes
           </div>
         {% endfor %}
         </div>
