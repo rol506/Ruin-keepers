@@ -3,6 +3,7 @@ from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
 from FDataBase import FDataBase
+from datetime import datetime
 
 app = Flask("ruinKeeper")
 app.config.update(SECRET_KEY=web_app_secret_key)
@@ -22,14 +23,6 @@ menu = [
             "title": "Прогулки",
             "url": "/events/walks"
         }
-        #{
-        #    "title": "Вход/Регистрация",
-        #    "url": "/login"
-        #},
-        #{
-        #    "title": "Запись",
-        #    "url": "/create"
-        #} 
 ]
 
 def connect_db():
@@ -66,7 +59,13 @@ def index():
     #db = FDataBase(get_db())
     #return render_template("event_choose.html", menu=menu, title="мероприятия")
 
-def process_request(name, birth, telegram, phone):
+def process_request(name, birth, telegram, phone, eventID):
+
+    db = FDataBase(get_db())
+
+    db.addUser(eventID, name, telegram, phone, birth)
+    #TODO message to the user "You have successfully registered for the event"
+
     flash("Вы успешно зарегистрировались на мероприятие!", "info")
     return redirect(url_for("index"))
 
@@ -85,7 +84,7 @@ def register_event():
             flash("Пожалуйста выберите мероприятие", "info")
             return redirect(url_for("register_event"))
 
-        return process_request(name, birth, telegram, phone)
+        return process_request(name, birth, telegram, phone, eventID)
 
     db = FDataBase(get_db())
 
@@ -100,6 +99,18 @@ def events():
     db = FDataBase(get_db())
 
     return render_template("events.html", menu=menu, events=db.getEvents())
+
+@app.route("/events/day/<day>")
+def eventsByDay(day):
+
+    if (int(day) < 10):
+        day = "0"+str(day)
+
+    date = datetime.today().strftime('%Y-%m-')
+    date += day
+    db = FDataBase(get_db())
+    events = db.getEventsByDate(date)
+    return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=50)
 
 @app.route("/events/walks", methods=["POST", "GET"])
 def walks():

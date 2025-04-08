@@ -36,7 +36,7 @@
             <select name="eventID">
               <option value="None">Выберите мероприятие</option>
               {% for e in events %}
-                <option value="{{e.id}}">{{e.name}}</option>
+              <option value="{{e.id}}">{{e.name}}</option>
               {% endfor %}
             </select>
           {% endif %}

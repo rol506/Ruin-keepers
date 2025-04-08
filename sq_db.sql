@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS events (
   photoPath TEXT,
   cost INTEGER NOT NULL,
   place TEXT NOT NULL,
+  date DATE NOT NULL,
+  time TIME NOT NULL,
   type TEXT NOT NULL
 );
 

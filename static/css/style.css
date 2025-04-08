@@ -174,7 +174,7 @@ a.anim-header:hover::before {
 a.anim {
   position: relative;
   text-decoration: none;
-  /*color: #000;*/
+  color: #000;
   text-decoration: none;
 }
 
@@ -186,12 +186,60 @@ a.anim::before {
   height: 2px;
   bottom: 0;
   left: 0;
-  /*background-color: #000;*/
+  background-color: #000;
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 a.anim:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-accent {
+  position: relative;
+  text-decoration: none;
+  color: #335435;
+  text-decoration: none;
+}
+
+a.anim-accent::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #335435;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-accent:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-grey {
+  position: relative;
+  text-decoration: none;
+  color: grey;
+  text-decoration: none;
+}
+
+a.anim-grey::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: grey;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-grey:hover::before {
   transform: scaleX(1);
 }
 
@@ -221,4 +269,32 @@ div.flash-info {
 
 div.flash-info p {
   text-align: center;
+}
+
+table.calendar {
+  font-size: 2rem;
+}
+
+table.calendar td {
+  padding: 15px;
+  border-radius: 64px;
+  text-align: center;
+}
+
+table.calendar td.not-current {
+  color: grey;
+}
+
+table.calendar td.with-event {
+  background: #7CE8E6;
+}
+
+table.calendar thead {
+  background: #47695B;
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-wrapper {
+  margin-bottom: 20px;
 }
