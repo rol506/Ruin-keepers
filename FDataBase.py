@@ -8,10 +8,10 @@ class FDataBase:
     def __del__(self):
         self.__db.close()
 
-    def addEvent(self, name, description, date, time, photoPath, place, cost: int):
-        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time) VALUES (?, ?, ?, ?, ?, ?, ?)"""
+    def addEvent(self, name, description, date, time, photoPath, place, cost: int, type="event"):
+        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         try:
-            self.__cur.execute(sql, (name, description, photoPath, place, cost, date, time))
+            self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time, type))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
@@ -66,7 +66,7 @@ class FDataBase:
 
     def addUser(self, eventID, name, telegram, phone, birth):
         #if (telegram)
-        sql = """INSERT INTO users(eventID, name, phone, birth, telegram) VALUES (?, ?, ?, ?, ?)"""
+        sql = """INSERT INTO users (eventID, name, phone, birth, telegram) VALUES (?, ?, ?, ?, ?)"""
         #else:
             #sql = """INSERT INTO users(eventID, name, phone, birth) VALUES (?, ?, ?, ?)"""
         try:
@@ -91,7 +91,15 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to remove user by telegram:", str(e))
 
-
+    def getUsersBeEvent(self, eventID):
+        sql = f"""SELECT * FROM users WHERE eventID ='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get users by event:", str(e))
+        return []
 
     def getTelegramCount(self, telegram, eventID) -> int | None:
         '''Returns None in case of an error'''

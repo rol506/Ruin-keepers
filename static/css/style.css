@@ -6,10 +6,7 @@ html, body {
   padding: 0;
   margin: 0;
   overflow-y: scroll;
-<<<<<<< Updated upstream
-=======
   overflow-x: hidden;
->>>>>>> Stashed changes
   width: 100vw;
   scroll-behavior: smooth;
   overflow-x:hidden;
@@ -80,6 +77,18 @@ table.calendar thead {
   margin-bottom: 20px;
 }
 
+table.receipt, table.receipt tr, table.receipt tr td {
+  border: 1px solid black;
+}
+
+table.receipt td {
+  padding: 5px;
+}
+
+table.receipt {
+  border-collapse: collapse;
+}
+
 div.container {
   display: flex;
   justify-content: center;
@@ -114,14 +123,14 @@ form.login div {
   border-radius: 16px;
 }
 
-form.login input:not(input[type="submit"]):focus, select:focus
+form.login input:not(input[type="submit"]):focus, select:focus, button.submit:focus
 {
   padding: 5px;
   border-radius: 8px;
   border: 1px solid black;
 }
 
-form.login input:not(input[type="submit"]), select
+form.login input:not(input[type="submit"]), select, button.submit
 {
   padding: 2px;
   border-radius: 4px;
@@ -131,7 +140,7 @@ form.login input:not(input[type="submit"]), select
   background: white;
 }
 
-form.login div input[type="submit"], input[type="submit"]
+form.login div input[type="submit"], input[type="submit"], button.submit
 {
   padding: 10px 20px;
   border-radius: 4px;
@@ -142,15 +151,23 @@ form.login div input[type="submit"], input[type="submit"]
   margin: 20px 0px;
   background: #7CE8E6;
   transition: 0.1s ease-out all;
+}
+
+form.login div input[type="submit"], input[type="submit"]
+{
   width: 100%;
 }
 
-form.login div input[type="submit"]:hover, input[type="submit"]:hover {
+form.login div input[type="submit"]:hover, input[type="submit"]:hover, button.submit:hover{
   background: #61b0ae;
 }
 
-form.login div input[type="submit"]:active, input[type="submit"]:active {
+form.login div input[type="submit"]:active, input[type="submit"]:active, button.submit:active{
   background: #4b8280;
+}
+
+div.inline {
+  display: inline-flex;
 }
 
 a.anim-header {
@@ -352,13 +369,6 @@ div.flash-info p {
 .topbar-logo img {
     height: 30px;
 }
-
-
-
-
-
-
-<<<<<<< Updated upstream
 
 .gallery-wrapper {
     padding: 40px 20px;
@@ -657,7 +667,7 @@ h1, h2 {
     .media-text:hover {
         color: #555;
     }
-=======
+
 .gallery {
     display: flex;
     align-items: center;
@@ -703,11 +713,3 @@ h1, h2 {
         border: 3px solid #4196f3;
         border-radius: 8px;
     }
-
-
-
-
-    
-
-
->>>>>>> Stashed changes

@@ -10,3 +10,5 @@ __pycache__
 ruin-keepers.json
 env
 .vs
+flsite.db
+admin_token.txt

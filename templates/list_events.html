@@ -15,9 +15,9 @@
           <div class="eventDesc">
             <p><span style="font-size: 1.5rem; font-weight: bolder">{{e.name}}</span> <span style="color: grey">{{e.date}}</span></p>
             {% if maxlen > 0 and e.description|length > maxlen %}
-            <p>{{e.description[:maxlen]}}...</p>
+            <p>{{e.description[:maxlen]|safe}}...</p>
             {% else %}
-            <p>{{e.description}}</p>
+            <p>{{e.description|safe}}</p>
             {% endif %}
             <form method="post">
               <input type="hidden" value="{{e.id}}" name="id">
