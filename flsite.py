@@ -30,8 +30,8 @@ menu = [
 
 ]
 
-def getSliderPaths():
-    with open("main-slide-config.txt", "r") as f:
+def getSliderPaths(configFileName):
+    with open(configFileName, "r") as f:
         ls = f.read().replace("\n", "")
         return ls.split(",")
 
@@ -62,7 +62,7 @@ def close_db(error):
 @app.route("/home")
 @app.route("/index")
 def index():
-    return render_template("index.html", menu=menu, slides=getSliderPaths())
+    return render_template("index.html", menu=menu, slides=getSliderPaths("main-slider-config.txt"))
 
 #@app.route("/events")
 #def event_choose():
@@ -191,7 +191,7 @@ def walks():
     return render_template("walks.html", menu=menu)
 @app.route("/events/gallery", methods=["POST", "GET"])
 def gallery():
-    return render_template("gallery.html", menu=menu)
+    return render_template("gallery.html", menu=menu, slides=getSliderPaths("gallery-slide-config.txt"))
 
 @app.errorhandler(404)
 def error_404(error): 

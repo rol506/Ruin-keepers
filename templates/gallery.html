@@ -15,21 +15,20 @@
         <h1>Галерея</h1>
 
         <div class="gallery">
-            <button class="arrow" onclick="scrollGallery(-1)">‹</button>
+            <button class="arrow" style="position: absolute; left: 20px; z-index: 100;" onclick="scrollGallery(-1)">‹</button>
 
             <div class="gallery-track" id="galleryTrack">
-                <img src="{{ url_for('static', filename='images/img1.jpg') }}" class="gallery-item">
-                <img src="{{ url_for('static', filename='images/img2.jpg') }}" class="gallery-item active">
-                <img src="{{ url_for('static', filename='images/img3.jpg') }}" class="gallery-item">
-                <img src="{{ url_for('static', filename='images/img4.jpg') }}" class="gallery-item">
-                <img src="{{ url_for('static', filename='images/img5.jpg') }}" class="gallery-item">
+              <img src="{{ url_for('static', filename=slides[-1]) }}" class="gallery-item active">
+              {% for s in range(slides|length -1) %}
+                <img src="{{ url_for('static', filename=slides[s]) }}" class="gallery-item">
+              {% endfor %}
             </div>
 
-            <button class="arrow" onclick="scrollGallery(1)">›</button>
+            <button class="arrow" style="position: absolute; right: 20px; z-index: 100;" onclick="scrollGallery(1)">›</button>
         </div>
 
         <script>
-            let currentIndex = 1;
+            let currentIndex = 0;
 
             function scrollGallery(direction) {
                 const items = document.querySelectorAll('.gallery-item');

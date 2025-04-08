@@ -92,7 +92,7 @@ class FDataBase:
         phone = usr['phone'] if phone is None else phone
         birth = usr['birth'] if birth is None else birth
 
-        sql = f"""UPDATE users name='{name}', telegram='{telegram}', phone='{phone}', birth='{birth}' WHERE id='{userID}'"""
+        sql = f"""UPDATE users SET name='{name}', telegram='{telegram}', phone='{phone}', birth='{birth}' WHERE id='{userID}'"""
         try:
             self.__cur.execute(sql)
             self.__db.commit()
