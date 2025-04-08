@@ -55,5 +55,6 @@ async def FDataExport():
     for i, (table_name, data) in enumerate(tables):
         export_table(table_name, data, i)
 
-if "__name__" == "__main__":
+    print("✅ Экспорт завершён!")
+if __name__ == "__main__":
     FDataExport()
