@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, url_for, redirect, flash
+from flask import Flask, render_template, g, request, request_started, url_for, redirect, flash, session
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
@@ -63,15 +63,48 @@ def index():
     #db = FDataBase(get_db())
     #return render_template("event_choose.html", menu=menu, title="мероприятия")
 
-def process_request(name, birth, telegram, phone, eventID):
+def process_request():
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        birth = request.form.get("birth")
+        telegram = request.form.get("telegram")
+        phone = request.form.get("phone")
+        eventID = request.form.get("eventID")
+
+        db = FDataBase(connect_db())
+
+        db.addUser(eventID, name, telegram, phone, birth)
+        #TODO message to the user "You have successfully registered for the event"
+
+@app.route("/events/events/register/pay", methods=["POST", "GET"])
+def payment():
+
+    name = session.get("name")
+    birth = session.get("birth")
+    telegram = session.get("telegram")
+    phone = session.get("phone")
+    eventID = session.get("eventID")
+
+    if not (name and birth and telegram and phone and eventID):
+        print("Invalid data!")
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        session.clear()
+        process_request()
+        flash("Вы успешно зарегистрировались на мероприятие!", "info")
+        print("successfully registered (", name, ")", "for the event id ", eventID)
+        return redirect(url_for("index"))
 
     db = FDataBase(get_db())
+    ev = db.getEventById(eventID)
 
-    db.addUser(eventID, name, telegram, phone, birth)
-    #TODO message to the user "You have successfully registered for the event"
+    eventType = "Мероприятие"
 
-    flash("Вы успешно зарегистрировались на мероприятие!", "info")
-    return redirect(url_for("index"))
+    cost = ev["cost"] / 100
+
+    return render_template("pay.html", event=ev, eventType=eventType, name=name, phone=phone, telegram=telegram, birth=birth, cost=cost, eventID=eventID)
 
 @app.route("/events/events/register", methods=["POST", "GET"])
 @app.route("/events/events/register/<eventID>", methods=["POST", "GET"])
@@ -79,6 +112,9 @@ def register_event(eventID=None):
 
     if request.method == "POST":
         name = request.form.get("name")
+        surname = request.form.get("surname")
+        fathername = request.form.get("fathername")
+
         birth = request.form.get("birth")
         telegram = request.form.get("telegram")
         phone = request.form.get("phone")
@@ -89,7 +125,29 @@ def register_event(eventID=None):
             flash("Пожалуйста выберите мероприятие", "info")
             return redirect(url_for("register_event"))
 
-        return process_request(name, birth, telegram, phone, eventID)
+        if " " in name or " " in surname or " " in fathername:
+            flash("ФИО не должно содержать пробелов!", "info")
+            return redirect(url_for("register_event"))
+        name = name + " " + surname + " " + fathername
+
+        if " " in telegram:
+            flash("Имя пользователя Telegram не может содержать пробелов!", "info")
+            return redirect(url_for("index"))
+
+        if "@" in telegram:
+            telegram = telegram[1:]
+
+        if " " in phone:
+            flash("Номер телефона не может содержать пробелов!", "info")
+            return redirect(url_for("index"))
+
+        session["name"] = name
+        session["birth"] = birth
+        session["telegram"] = telegram
+        session["phone"] = phone
+        session["eventID"] = eventID
+
+        return redirect(url_for("payment"))
 
     db = FDataBase(get_db())
 

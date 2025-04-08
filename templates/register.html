@@ -17,8 +17,12 @@
 
           <div>
 
-          <p>ФИО</p>
-          <input type="text" required name="name" required>
+          <p style="text-align: center">ФИО</p>
+          <div class="inline">
+          <input type="text" required name="name" required placeholder='Имя' style="margin-right: 5px;">
+          <input type="text" required name="surname" required placeholder='Фамилия' style="margin: 0 5px;">
+          <input type="text" required name="fathername" placeholder='Отчество' style="margin-left: 5px">
+          </div>
 
           <p>Ваше имя пользователя в телеграмм (необязательно)</p>
           <input type="text" required name="telegram">
@@ -42,7 +46,7 @@
           {% endif %}
 
           <br>
-          <input type="submit" value="Подать заявку">
+          <input type="submit" value="Оплатить">
 
           </div>
 
