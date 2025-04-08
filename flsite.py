@@ -110,6 +110,10 @@ def payment():
 @app.route("/events/events/register/<eventID>", methods=["POST", "GET"])
 def register_event(eventID=None):
 
+    db = FDataBase(get_db())
+
+    eventSelected = eventID is not None
+
     if request.method == "POST":
         name = request.form.get("name")
         surname = request.form.get("surname")
@@ -123,11 +127,11 @@ def register_event(eventID=None):
 
         if eventID == "None":
             flash("Пожалуйста выберите мероприятие", "info")
-            return redirect(url_for("register_event"))
+            return redirect(url_for("register_event", eventID=eventID if eventSelected else None))
 
         if " " in name or " " in surname or " " in fathername:
             flash("ФИО не должно содержать пробелов!", "info")
-            return redirect(url_for("register_event"))
+            return redirect(url_for("register_event", eventID=eventID if eventSelected else None))
         name = name + " " + surname + " " + fathername
 
         if " " in telegram:
@@ -141,6 +145,14 @@ def register_event(eventID=None):
             flash("Номер телефона не может содержать пробелов!", "info")
             return redirect(url_for("index"))
 
+        if db.getPhoneCount(phone, eventID) > 0:
+            flash("Номер телефона уже зарегистрирован на это мероприятие!", "info")
+            return redirect(url_for("register_event", eventID=eventID if eventSelected else None))
+
+        if db.getTelegramCount(telegram, eventID) > 0:
+            flash("Имя пользователя Telegram уже зарегистрировано на это мероприятие!", "info")
+            return redirect(url_for("register_event", eventID=eventID if eventSelected else None))
+
         session["name"] = name
         session["birth"] = birth
         session["telegram"] = telegram
@@ -148,8 +160,6 @@ def register_event(eventID=None):
         session["eventID"] = eventID
 
         return redirect(url_for("payment"))
-
-    db = FDataBase(get_db())
 
     return render_template("register.html", menu=menu, events=db.getEvents(), eventID=eventID)
 
