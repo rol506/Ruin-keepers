@@ -96,7 +96,6 @@ def payment():
         session.clear()
         process_request()
         flash("Вы успешно зарегистрировались на мероприятие!", "info")
-        print("successfully registered (", name, ")", "for the event id ", eventID)
         return redirect(url_for("index"))
 
     db = FDataBase(get_db())
