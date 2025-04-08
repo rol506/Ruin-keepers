@@ -298,7 +298,6 @@ div.flash-info p {
   text-align: center;
 }
 
-/*Это моё*/
 .container {
     max-width: 1200px;
     margin: auto;
@@ -340,7 +339,7 @@ div.flash-info p {
   border-radius: 1rem;
   object-fit: cover;
 }
-/*Это моё2*/
+
 .topbar {
     background-color: #2c2c38;
     display: flex;
@@ -478,8 +477,6 @@ div.flash-info p {
   }
 }
 
-/*МОЁ*/
-
 .container {
     max-width: 900px;
     margin: auto;
@@ -533,15 +530,12 @@ h1, h2 {
     margin-right: 12px;
 }
 
-/* Если захочешь отдельно настроить VK / Telegram иконки */
 .vk-icon {
-    /* можно задать, например, другой размер или цвет фона */
     width: 100px;
     height: 100px;
 }
 
 .tg-icon {
-    /* или чуть меньше/больше иконку телеги */
     width: 100px;
     height: 100px;
 }
@@ -590,9 +584,6 @@ h1, h2 {
     .donate-btn:hover {
         background: #8cdada;
     }
-
-
-/* Существующий код остаётся */
 
 .slider {
     position: relative;
