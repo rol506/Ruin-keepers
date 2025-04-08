@@ -30,8 +30,12 @@
         <script>
             let currentIndex = 0;
 
+            const items = document.querySelectorAll('.gallery-item');
+
+
             function scrollGallery(direction) {
-                const items = document.querySelectorAll('.gallery-item');
+              if (currentIndex + direction < items.length && currentIndex + direction >= 0)
+              {
                 currentIndex = (currentIndex + direction + items.length) % items.length;
 
                 items.forEach((img, i) => {
@@ -40,6 +44,7 @@
 
                 const offset = (currentIndex - 1) * 216; // 200px + 16px gap
                 document.getElementById('galleryTrack').style.transform = `translateX(-${offset}px)`;
+              }
             }
         </script>
     </div>

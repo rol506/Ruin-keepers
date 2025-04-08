@@ -402,6 +402,7 @@ div.flash-info p {
 .gallery {
     display: flex;
     transition: transform 0.5s ease-in-out;
+    justify-content: center;
 }
 
 .gallery img {
