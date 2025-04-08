@@ -443,13 +443,15 @@ async def get_user_birth_change(message: Message, state: FSMContext):
 class ViewUsers(StatesGroup):
     show = State()
 
-@dp.callback_query(ViewUsers.show)
-async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, message: Message = None):
-    if message is not None and message.text == 'Назад':
+@dp.message(ViewUsers.show)
+async def user_navigation_quit(message: Message, state: FSMContext):
+    if message.text == 'Назад':
         await state.set_state(None)
         await show_menu(message)
         return
 
+@dp.callback_query(ViewUsers.show)
+async def handle_user_navigation(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     users = data.get("users", [])
     index = data.get("index", 0)
@@ -497,6 +499,72 @@ async def get_user_data(user):
     return text
 
 # endregion
+
+# region Вывод списка мероприятий
+
+class ViewEvents(StatesGroup):
+    show = State()
+
+@dp.message(ViewEvents.show)
+async def user_navigation_quit(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+        return
+
+@dp.callback_query(ViewEvents.show)
+async def handle_events_navigation(callback: CallbackQuery, state: FSMContext, message: Message = None):
+    if message is not None and message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+        return
+
+    data = await state.get_data()
+    events = data.get("events", [])
+    index = data.get("index", 0)
+
+    if not events:
+        await callback.message.edit_text("Список участников пуст.")
+        await state.clear()
+        return
+
+    if callback.data.startswith("prev_"):
+        index = max(0, int(callback.data.split("_")[1]))
+    elif callback.data.startswith("next_"):
+        index = min((len(events) - 1) // 3, int(callback.data.split("_")[1]))
+    else:
+        await callback.answer("Некорректная кнопка.")
+        return
+
+    await state.update_data(index=index)
+    user = events[index * 3]
+
+    text = await get_user_data(user)
+    for i in range(index * 3 + 1, min(index * 3 + 3, len(events))):
+        text += '\n\n' + await get_user_data(events[i])
+
+    buttons = []
+    if index > 0:
+        buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
+    if (index + 1) * 3 < len(events):
+        buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
+
+    await callback.message.edit_text(text, reply_markup=keyboard)
+    await callback.answer()
+
+async def get_event_data(event):
+    text = (
+        f"🆔 ID: {event['id']}\n"
+        f"🚩 Название: {event['name']}\n"
+        f"📃 Описание: {event['description']}\n"
+        f" Стоимость: {event['cost']}\n"
+        f" Место: {event['place']}\n"
+        f" Дата: {event['date'] or '—'}\n"
+        f" Время: {event['time']}"
+    )
+    return text
 
 # endregion
 
@@ -663,6 +731,28 @@ async def receive_message(message: Message, state: FSMContext):
                     inline_buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
                 keyboard = InlineKeyboardMarkup(inline_keyboard=[inline_buttons] if inline_buttons else [])  # Передаем пустой список, если кнопок нет
                 
+                await bot.send_message(message.chat.id, text, reply_markup=keyboard)
+            case 'Вывести список мероприятий':
+                buttons = [[KeyboardButton(text='Назад')]]
+                events = db.getEvents()
+                if not events:
+                    await bot.send_message(message.chat.id, "Список мероприятий пуст.")
+                    return
+
+                await state.set_state(ViewEvents.show)
+                await state.update_data(events=events, index=0)
+
+                event = events[0]
+                text = await get_event_data(event)
+                for i in range(1, min(3, len(events))):
+                    text += '\n\n' + await get_event_data(events[i])
+
+                inline_buttons = []
+                if len(events) > 3:
+                    inline_buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
+                keyboard = InlineKeyboardMarkup(
+                    inline_keyboard=[inline_buttons] if inline_buttons else [])  # Передаем пустой список, если кнопок нет
+
                 await bot.send_message(message.chat.id, text, reply_markup=keyboard)
 
         if message_text is not None:
