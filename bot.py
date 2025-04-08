@@ -6,7 +6,7 @@ import time
 from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command
 from aiogram.filters import StateFilter
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, PhotoSize
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
@@ -58,19 +58,18 @@ async def get_event_time(message: Message, state: FSMContext):
         await state.set_state(None)
         await show_menu(message)
     else:
-        data = await state.get_data()
         datestr = message.text.split()
         if len(datestr) != 2:
             await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
         else:
-            date = parse_date(datestr[0])
-            time = parse_time(datestr[1])
+            date = await parse_date(datestr[0])
+            time = await parse_time(datestr[1])
             if date is None or time is None:
                 await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
             else:
-                db.addEvent(data['event_name'], data['event_description'], date, time, 'none', 'нигде',1000)
-                await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
-                await state.set_state(None)
+                await state.update_data(event_date=str(date), event_time=str(time))
+                await state.set_state(CreateEvent.photo_state)
+                await bot.send_message(message.chat.id, 'Пришлите фотографию, чтобы привязать её к мероприятию.')
 
 @dp.message(CreateEvent.photo_state)
 async def get_event_photo(message: Message, state: FSMContext):
@@ -78,9 +77,41 @@ async def get_event_photo(message: Message, state: FSMContext):
         await state.set_state(None)
         await show_menu(message)
     else:
-        await state.update_data(event_photo=message.text)
-        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм.')
-        await state.set_state(CreateEvent.time_state)
+        if message.photo is None:
+            await bot.send_message(message.chat.id, 'В вашем сообщении нет фотографии.')
+        else:
+            path = 'static/images/custom/' + await create_photo()
+            await bot.download(message.photo[0].file_id, path)
+            await state.update_data(event_photo=path)
+            await bot.send_message(message.chat.id, 'Введите место проведения мероприятия.')
+            await state.set_state(CreateEvent.place_state)
+
+@dp.message(CreateEvent.place_state)
+async def get_event_place(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(event_place=message.text)
+        await bot.send_message(message.chat.id, 'Введите стоимость мероприятия в рублях.')
+        await state.set_state(CreateEvent.cost_state)
+
+@dp.message(CreateEvent.cost_state)
+async def get_event_cost(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            data = await state.get_data()
+            cost = int(float(message.text) * 100)
+
+            db.addEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'], data['event_photo'], data['event_place'], cost)
+            await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
+            await state.set_state(None)
+        else:
+            await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
+
 
 # endregion
 
@@ -158,6 +189,85 @@ async def get_user_birth(message: Message, state: FSMContext):
 
 # endregion
 
+class ChangeRegistration (StatesGroup):
+    event_state = State()
+    name_state = State()
+    telegram_state = State()
+    phone_state = State()
+    birth_state = State()
+
+# region Изменение регистрации
+
+@dp.message(ChangeRegistration.name_state)
+async def get_user_name_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(user_name=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя. '
+                                                '(Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeRegistration.event_state)
+
+@dp.message(ChangeRegistration.event_state)
+async def get_user_event_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric() or message.text == '.':
+            if db.getEventById(message.text) or message.text == '.':
+                await state.update_data(user_event=int(message.text) if message.text != '.' else None)
+                await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя. (Введите точку, чтобы оставить прежним)')
+                await state.set_state(ChangeRegistration.telegram_state)
+            else:
+                await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+
+@dp.message(ChangeRegistration.telegram_state)
+async def get_user_telegram_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(user_telegram=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите номер телефона этого пользователя. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeRegistration.phone_state)
+
+@dp.message(ChangeRegistration.phone_state)
+async def get_user_phone_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(user_phone=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг". (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeRegistration.birth_state)
+
+@dp.message(ChangeRegistration.birth_state)
+async def get_user_birth_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text == '.':
+            birth = None
+        else:
+            birth = await parse_date(message.text)
+            if birth is None:
+                await bot.send_message(message.chat.id, 'С вашей датой что-то не так.')
+                return
+        data = await state.get_data()
+
+        await bot.send_message(message.chat.id, f'Запись успешно изменена.')
+        db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
+        # TODO: функция чтобы менять запись
+        await state.set_state(None)
+        await show_menu(message)
+
+# endregion
+
 async def verify_admin(token):
     with open('admin_token.txt', 'r+') as file:
         file_token = file.read()
@@ -167,6 +277,15 @@ async def verify_admin(token):
             file.truncate()
             return True
         return False
+
+async def create_photo():
+    id = 0
+    with open('last_photo_id', 'r+') as file:
+        id = int(file.read())
+        file.seek(0)
+        file.write(str(id + 1))
+    return str(id) + '.jpg'
+
 
 async def generate_token(username):
     token = ''
@@ -179,7 +298,7 @@ async def parse_date(date):
     try:
         date = date.split('.')
         day, month, year = map(int, date)
-        return datetime.date(year, month, day)
+        return str(datetime.date(year, month, day))
     except:
         return None
 
@@ -241,7 +360,8 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Выберите действие.'
                 buttons = [
                     [KeyboardButton(text='Записать участника на мероприятие'),
-                     KeyboardButton(text='Выписать участника с мероприятия')],
+                     KeyboardButton(text='Выписать участника с мероприятия'),
+                     KeyboardButton(text='Изменить запись')],
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Взаимодействие со списком мероприятий':
@@ -257,6 +377,9 @@ async def receive_message(message: Message, state: FSMContext):
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(RegisterUser.name_state)
             case 'Выписать участника с мероприятия':
+                pass
+            case 'Изменить запись':
+
                 pass
             case 'Добавить мероприятие':
                 message_text = 'Введите название мероприятия.'
