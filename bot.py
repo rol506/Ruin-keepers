@@ -24,6 +24,8 @@ bot = Bot(token=telegram_token)
 dp = Dispatcher()
 db: FDataBase = FDataBase(connect_db())
 
+# region Создание мероприятия
+
 class CreateEvent (StatesGroup):
     name_state = State()
     description_state = State()
@@ -31,8 +33,6 @@ class CreateEvent (StatesGroup):
     photo_state = State()
     place_state = State()
     cost_state = State()
-
-# region Создание мероприятия
 
 @dp.message(CreateEvent.name_state)
 async def get_event_name(message: Message, state: FSMContext):
@@ -51,7 +51,7 @@ async def get_event_description(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(event_description=message.text)
-        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм.')
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм чч:мм.')
         await state.set_state(CreateEvent.time_state)
 
 @dp.message(CreateEvent.time_state)
@@ -117,10 +117,10 @@ async def get_event_photo(message: Message, state: FSMContext):
 
 # endregion
 
+# region Удаление мероприятия
+
 class DeleteEvent (StatesGroup):
     id_state = State()
-
-# region Удаление мероприятия
 
 @dp.message(DeleteEvent.id_state)
 async def get_event_id_delete(message: Message, state: FSMContext):
@@ -141,6 +141,8 @@ async def get_event_id_delete(message: Message, state: FSMContext):
 
 # endregion
 
+# region Изменение мероприятия
+
 class ChangeEvent (StatesGroup):
     id_state = State()
     name_state = State()
@@ -149,8 +151,6 @@ class ChangeEvent (StatesGroup):
     photo_state = State()
     place_state = State()
     cost_state = State()
-
-# region Изменение мероприятия
 
 @dp.message(ChangeEvent.id_state)
 async def get_event_id_change(message: Message, state: FSMContext):
@@ -185,7 +185,7 @@ async def get_event_description_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(event_description=message.text if message.text != '.' else None)
-        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм. (Введите точку, чтобы оставить прежним)')
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм чч:мм. (Введите точку, чтобы оставить прежним)')
         await state.set_state(ChangeEvent.time_state)
 
 @dp.message(ChangeEvent.time_state)
@@ -199,6 +199,8 @@ async def get_event_time_change(message: Message, state: FSMContext):
             await state.set_state(ChangeEvent.place_state)
             await bot.send_message(message.chat.id,
                                    'Введите место проведения мероприятия. (Введите точку, чтобы оставить прежним)')
+            return
+
         datestr = message.text.split()
         if len(datestr) != 2:
             await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
@@ -252,12 +254,14 @@ async def get_event_photo_change(message: Message, state: FSMContext):
             path = await create_photo()
             await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
 
-        db.updateEvent(data["event_id"], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
+        db.updateEvent(data['event_id'], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
                     path, data['event_place'], data['event_cost'])
         await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
         await state.set_state(None)
 
 # endregion
+
+# region Регистрация пользователя
 
 class RegisterUser (StatesGroup):
     event_state = State()
@@ -265,8 +269,6 @@ class RegisterUser (StatesGroup):
     telegram_state = State()
     phone_state = State()
     birth_state = State()
-
-# region Регистрация пользователя
 
 @dp.message(RegisterUser.name_state)
 async def get_user_name(message: Message, state: FSMContext):
@@ -333,10 +335,10 @@ async def get_user_birth(message: Message, state: FSMContext):
 
 # endregion
 
+# region Удаление регистрации
+
 class DeleteRegistration (StatesGroup):
     id_state = State()
-
-# region Удаление регистрации
 
 @dp.message(DeleteRegistration.id_state)
 async def get_user_id_delete(message: Message, state: FSMContext):
@@ -355,8 +357,9 @@ async def get_user_id_delete(message: Message, state: FSMContext):
         else:
             await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
 
-
 # endregion
+
+# region Изменение регистрации
 
 class ChangeRegistration (StatesGroup):
     id_state = State()
@@ -364,8 +367,6 @@ class ChangeRegistration (StatesGroup):
     telegram_state = State()
     phone_state = State()
     birth_state = State()
-
-# region Изменение регистрации
 
 @dp.message(ChangeRegistration.id_state)
 async def get_user_id_change(message: Message, state: FSMContext):
@@ -437,7 +438,9 @@ async def get_user_birth_change(message: Message, state: FSMContext):
 
 # endregion
 
+# ПРИМЕЧАНИЕ: не уверен что уместно делать список через FSM, проще сразу всё пихнуть внутрь главного match'a
 # region Вывод списка участников
+
 class ViewUsers(StatesGroup):
     show = State()
 
@@ -489,6 +492,7 @@ async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, mes
 # endregion
 
 # endregion
+
 async def verify_admin(token):
     with open('admin_token.txt', 'r+') as file:
         file_token = file.read()
@@ -583,7 +587,7 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Записать участника на мероприятие'),
                      KeyboardButton(text='Выписать участника с мероприятия'),
                      KeyboardButton(text='Изменить запись')],
-                     [KeyboardButton(text='Вывести список участников')],
+                    [KeyboardButton(text='Вывести список участников')],
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Взаимодействие со списком мероприятий':
