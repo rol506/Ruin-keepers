@@ -117,7 +117,7 @@ async def get_user_birth(message: Message, state: FSMContext):
         await state.set_state(None)
         await show_menu(message.chat.id)
     else:
-        birth = parse_date(message.text)
+        birth = await parse_date(message.text)
         if birth is not None:
             data = await state.get_data()
 
@@ -129,23 +129,24 @@ async def get_user_birth(message: Message, state: FSMContext):
 
 # endregion
 
-def verify_admin(token):
-    tokens = open('admin_tokens.txt').read().split(',')
-    for i in range(len(tokens)):
-        if tokens[i] == token:
-            tokens.pop(i)
-            open('admin_tokens.txt').write(','.join(tokens))
+async def verify_admin(token):
+    with open('admin_token.txt', 'r+') as file:
+        file_token = file.read()
+        if file_token == token:
+            file.seek(0)
+            file.write('')
+            file.truncate()
             return True
-    return False
+        return False
 
-def generate_token(username):
+async def generate_token(username):
     token = ''
     for i in range(10):
-        token += chr(ord('a') + random.randint(0, 26))
+        token += chr(ord('a') + random.randint(0, 25))
     time_token = str(hash(time.time())) + str(hash(username))
     return token + time_token
 
-def parse_date(date):
+async def parse_date(date):
     try:
         date = date.split('.')
         day, month, year = map(int, date)
@@ -158,14 +159,24 @@ async def cmd_start(message: Message, state: FSMContext):
     if True: # Если чел зареган как админ
         await state.set_state(None)
         await show_menu(message.chat.id)
+    else:
+        await bot.send_message(message.chat.id, 'Используйте команду /admin, чтобы войти как администратор.')
 
 @dp.message(Command("admin"))
 async def cmd_admin(message: Message):
-    args = message.split()
-    if len(args) > 1:
-        token = [1]
-        if verify_admin(token):
-            pass # бро реально стал админом
+    args = message.text.split()
+    if True: # если чел не админ
+        if len(args) > 1:
+            token = args[1]
+            if await verify_admin(token):
+                await bot.send_message(message.chat.id, 'Вы успешно стали администратором.')
+                await show_menu(message.chat.id)
+            else:
+                await bot.send_message(message.chat.id, 'Токен недействителен.')
+        else:
+            await bot.send_message(message.chat.id, 'Введите ваш пригласительный токен после /admin.')
+    else:
+        await bot.send_message(message.chat.id, 'Вы уже администратор.')
 
 async def show_menu(chat_id : int):
     message_text = 'Выберите действие через кнопки внизу.'
@@ -174,7 +185,7 @@ async def show_menu(chat_id : int):
         [KeyboardButton(text='Взаимодействие со списком мероприятий')]
     ]
     if True: # если старший админ
-        buttons += [KeyboardButton(text='Добавление администратора')]
+        buttons += [[KeyboardButton(text='Добавление администратора')]]
     keyboard = ReplyKeyboardMarkup(keyboard=buttons)
 
     await bot.send_message(chat_id, message_text, reply_markup=keyboard)
@@ -217,16 +228,12 @@ async def receive_message(message: Message, state: FSMContext):
             case 'Изменить мероприятие':
                 pass
             case 'Добавление администратора':
-                token = generate_token(message.from_user.username)
-                with open('admin_tokens.txt') as file:
-                    text = file.read()
-                    if len(text) > 0:
-                        text += ',' + token
-                    else:
-                        text = token
-                    file.write(text)
+                token = await generate_token(message.from_user.username)
+                with open('admin_token.txt', 'w') as file:
+                    file.write(token)
                 message_text = (f'Ваш токен:\n{token}\nПередайте его тому, кого хотите сделать администратором. '
-                                'Он должен использовать команду /admin с вашим токеном. Токен действует только один раз.')
+                                'Он должен использовать команду /admin с вашим токеном. Токен действует только один раз. '
+                                'Одновременно действителен только один токен.')
                 buttons = [[KeyboardButton(text='Назад')]]
 
         if message_text is not None:
