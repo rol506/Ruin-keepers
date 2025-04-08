@@ -197,6 +197,8 @@ async def get_event_time_change(message: Message, state: FSMContext):
             await state.set_state(ChangeEvent.place_state)
             await bot.send_message(message.chat.id,
                                    'Введите место проведения мероприятия. (Введите точку, чтобы оставить прежним)')
+            return
+
         datestr = message.text.split()
         if len(datestr) != 2:
             await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
@@ -250,7 +252,7 @@ async def get_event_photo_change(message: Message, state: FSMContext):
             path = await create_photo()
             await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
 
-        db.updateEvent(data["event_id"], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
+        db.updateEvent(data['event_id'], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
                     path, data['event_place'], data['event_cost'])
         await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
         await state.set_state(None)
@@ -553,7 +555,7 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Записать участника на мероприятие'),
                      KeyboardButton(text='Выписать участника с мероприятия'),
                      KeyboardButton(text='Изменить запись')],
-                     [KeyboardButton(text='Вывести список участников')],
+                    [KeyboardButton(text='Вывести список участников')],
                     [KeyboardButton(text='Назад')]
                 ]
             case 'Взаимодействие со списком мероприятий':
