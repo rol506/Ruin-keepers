@@ -21,7 +21,7 @@ class FDataBase:
         #remove associated users
         users = self.getUsersByEvent(id)
         for u in users:
-            self.removeUserByPhone(u["phone"])
+            self.removeUserByID(u["id"])
 
         #remove the event
         sql = f"""DELETE FROM events WHERE id = '{id}'"""
@@ -114,6 +114,14 @@ class FDataBase:
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to remove user by telegram:", str(e))
+
+    def removeUserById(self, userID):
+        sql = f"""DELETE FROM users WHERE id='{userID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove user by id:", str(e))
 
     def getUsersByEvent(self, eventID):
         sql = f"""SELECT * FROM users WHERE eventID ='{eventID}'"""

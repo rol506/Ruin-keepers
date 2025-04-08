@@ -62,7 +62,7 @@ def close_db(error):
 @app.route("/home")
 @app.route("/index")
 def index():
-    return render_template("index.html", menu=menu, slides=getSliderPaths("main-slider-config.txt"))
+    return render_template("index.html", menu=menu, slides=getSliderPaths("main-slide-config.txt"))
 
 #@app.route("/events")
 #def event_choose():
