@@ -119,7 +119,9 @@ def eventsByDay(day):
 @app.route("/events/walks", methods=["POST", "GET"])
 def walks():
     return render_template("walks.html", menu=menu)
-
+@app.route("/events/gallery", methods=["POST", "GET"])
+def gallery():
+    return render_template("gallery.html", menu=menu)
 
 
 
