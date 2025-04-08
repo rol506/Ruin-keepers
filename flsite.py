@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, request_started, url_for, redirect, flash, session, jsonify
+from flask import Flask, render_template, g, request, request_started, url_for, redirect, flash, session
 from SETTINGS import web_app_secret_key, web_app_debug
 import os
 import sqlite3
@@ -18,10 +18,6 @@ menu = [
         {
             "title": "Мероприятия",
             "url": "/events/events"
-        },
-        {
-            "title": "Прогулки",
-            "url": "/events/walks"
         },
         {
             "title": "Галерея",
@@ -52,33 +48,6 @@ def get_db():
     if not hasattr(g, "link_db"):
         g.link_db = connect_db()
     return g.link_db
-
-@app.route("/event/get-color/day", methods=["POST", "GET"])
-def getEventColor(day):
-    if (int(day) < 10):
-        day = "0"+str(day)
-
-    date = datetime.today().strftime('%Y-%m-')
-    date += day
-    db = FDataBase(connect_db())
-    events = db.getEventsByDate(date)
-    print(len(events))
-    tpe=events[0]["type"]
-    print(tpe)
-
-    match tpe:
-        case "subb":
-            return jsonify({"color": "#01A23F"})
-        case "lection":
-            return "#D1EB0B"
-        case "walk":
-            return "#07C0BD"
-        case "rest":
-            return "#E21216"
-        case "photo":
-            return "#8729AD"
-
-    return "#07C0BD"
 
 @app.teardown_appcontext
 def close_db(error):
@@ -131,7 +100,7 @@ def payment():
         return redirect(url_for("index"))
 
     db = FDataBase(get_db())
-    ev = db.getEventById(eventID)
+    ev = db.getEventByID(eventID)
 
     eventType = "Мероприятие"
 
@@ -196,8 +165,8 @@ def events():
 
     return render_template("events.html", menu=menu, events=db.getEvents())
 
-@app.route("/events/day/<day>", methods=["POST", "GET"])
-def eventsByDay(day):
+@app.route("/events/day/<month>/<day>", methods=["POST", "GET"])
+def eventsByDay(month, day):
 
     if request.method == "POST":
         id = request.form.get("id")
@@ -206,8 +175,8 @@ def eventsByDay(day):
     if (int(day) < 10):
         day = "0"+str(day)
 
-    date = datetime.today().strftime('%Y-%m-')
-    date += day
+    date = datetime.today().strftime('%Y-')
+    date += month + "-" + day
     db = FDataBase(connect_db())
     events = db.getEventsByDate(date)
     print(len(events))

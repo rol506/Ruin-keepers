@@ -127,8 +127,8 @@ async def get_event_id_delete(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
-                db.removeEventById(message.text)
+            if db.getEventByID(message.text):
+                db.removeEventByID(message.text)
                 await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Мероприятие успешно удалено.')
                 await show_menu(message)
@@ -157,7 +157,7 @@ async def get_event_id_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
+            if db.getEventByID(message.text):
                 await state.set_state(ChangeEvent.name_state)
                 await state.update_data(event_id=message.text)
                 await bot.send_message(message.chat.id, 'Введите название мероприятия. (Введите точку, чтобы оставить прежним)')
@@ -250,7 +250,7 @@ async def get_event_photo_change(message: Message, state: FSMContext):
             path = await create_photo()
             await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
 
-        db.updateEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'],
+        db.updateEvent(data["event_id"], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
                     path, data['event_place'], data['event_cost'])
         await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
         await state.set_state(None)
@@ -283,7 +283,7 @@ async def get_user_event(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getEventById(message.text):
+            if db.getEventByID(message.text):
                 await state.update_data(user_event=int(message.text))
                 await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя.')
                 await state.set_state(RegisterUser.telegram_state)
@@ -343,8 +343,8 @@ async def get_user_id_delete(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getUserById(message.text):
-                db.removeUserById(message.text)
+            if db.getUserByID(message.text):
+                db.removeUserByID(message.text)
                 await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Запись успешно удалена.')
                 await show_menu(message)
@@ -372,7 +372,7 @@ async def get_user_id_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            if db.getUserById(int(message.text)):
+            if db.getUserByID(int(message.text)):
                 await state.update_data(user_id=int(message.text))
                 await bot.send_message(message.chat.id,
                                        'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя. '
