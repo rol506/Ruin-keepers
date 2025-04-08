@@ -186,10 +186,7 @@ a.anim::before {
   height: 2px;
   bottom: 0;
   left: 0;
-<<<<<<< HEAD
   background-color: #000;
-=======
->>>>>>> 4bd58f6f0b2cc3575d5f3914df1b871d54466825
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }

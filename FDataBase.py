@@ -13,6 +13,14 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
 
+    def removeEventById(self, id):
+        sql = f"""DELETE FROM events WHERE id = '{id}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove event by id:", str(e))
+
     def getEventByName(self, name):
         sql = f"""SELECT * FROM events WHERE name = '{name}'"""
         try:
@@ -64,14 +72,93 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to add user:", str(e))
 
-    def getUserByLogin(self, login):
-        sql = f"""SELECT * FROM users WHERE login='{login}'"""
+    def removeUserByPhone(self, phone, eventID):
+        sql = f"""DELETE FROM users WHERE phone='{phone}' AND eventID='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove user by phone:", str(e))
+
+    def removeUserByTelegram(self, telegram, eventID):
+        sql = f"""DELETE FROM users WHERE telegram='{telegram}' AND eventID='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove user by telegram:", str(e))
+
+
+
+    def getTelegramCount(self, telegram, eventID) -> int | None:
+        '''Returns None in case of an error'''
+        sql = f"""SELECT COUNT(id) AS cnt FROM users WHERE telegram='{telegram}' AND eventID='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchone()
+            if res: return int(res["cnt"])
+        except sqlite3.Error as e:
+            print("Failed to get count of telegrams:", str(e))
+            return None
+        return 0
+
+    def getPhoneCount(self, phone, eventID) -> int | None:
+        '''Returns None in case of an error'''
+        sql = f"""SELECT COUNT(id) AS cnt FROM users WHERE phone='{phone}' AND eventID='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchone()
+            if res: return int(res["cnt"])
+        except sqlite3.Error as e:
+            print("Failed to get count of phones:", str(e))
+            return None
+        return 0
+
+    def getUserEventsByPhone(self, phone):
+        sql = f"""SELECT eventID FROM user WHERE phone='{phone}'"""
+        try:
+            self.__cur.execute(sql)
+            IDs = self.__cur.fetchall()
+
+            res = []
+
+            for i in IDs:
+                sql = f"""SELECT * FROM events WHERE id='{i['eventID']}'"""
+                self.__cur.execute(sql)
+                res.append(self.__cur.fetchone())
+
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get events of the user:", str(e))
+        return []
+
+    def getUserEventsByTelegram(self, telegram):
+        sql = f"""SELECT eventID FROM user WHERE telegram='{telegram}'"""
+        try:
+            self.__cur.execute(sql)
+            IDs = self.__cur.fetchall()
+
+            res = []
+
+            for i in IDs:
+                sql = f"""SELECT * FROM events WHERE id='{i['eventID']}'"""
+                self.__cur.execute(sql)
+                res.append(self.__cur.fetchone())
+
+            if res: return res
+            
+        except sqlite3.Error as e:
+            print("Failed to get events of the user:", str(e))
+        return []
+
+    def getUserByPhone(self, phone):
+        sql = f"""SELECT * FROM users WHERE phone='{phone}'"""
         try:
             self.__cur.execute(sql)
             res = self.__cur.fetchall()
             if res: return res
         except sqlite3.Error as e:
-            print("Failed to get user by login:", str(e))
+            print("Failed to get user by phone:", str(e))
         return []
 
     def getUserById(self, id):
@@ -83,3 +170,37 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to get user by id:", str(e))
         return {}
+
+    def addAdmin(self, login, role: bool):
+        """if role -> admin role is GreatAdmin else just admin"""
+        sql = """INSERT INTO users (login, role) VALUES (?, ?)"""
+        if (bool(role)):
+            role = "GreatAdmin"
+        else:
+            role = "admin"
+        try:
+            self.__cur.execute(sql, (login, role))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to add admin:", str(e))
+
+    def getAdminByLogin(self, login) -> str | None:
+        '''Returns admin role or None if not found'''
+        sql = f"""SELECT * FROM admins WHERE login='{login}'"""
+        try:
+            self.__cur.execute(sql);
+            res = self.__cur.fetchone()
+            if res: return res["role"]
+        except sqlite3.Error as e:
+            print("Failed to get admin role by login:", str(e))
+        return None
+
+    def removeAdminByLogin(self, login):
+        '''Removes admin if it's role is not GreatAdmin (other is admin)'''
+        sql = f"""DELETE FROM admins WHERE login='{login}' and role='admin'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove admin by login:", str(e))
+
