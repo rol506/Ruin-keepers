@@ -14,7 +14,7 @@ html, body {
 
 div.mainmenu {
   position: static;
-  background-color: rgba(0, 0, 0, 1);
+  background-color: #2C2D39;
   padding: 0;
   margin: 0;
   display: flex;
@@ -32,6 +32,19 @@ div.mainmenu div a {
   color: white;
   text-decoration: none;
   font-size: 1.25rem;
+}
+
+div.footer {
+  position: static;
+  background: #2C2D39;
+  color: white;
+  font-weight: bolder;
+  font-size: 1.25rem;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: max(50vh, 40px);
 }
 
 .logoText {
@@ -54,9 +67,10 @@ table.calendar {
 }
 
 table.calendar td {
-  padding: 15px;
-  border-radius: 64px;
+  padding: 10px;
+  border-radius: 32px;
   text-align: center;
+  font-family: "Unbounded";
 }
 
 table.calendar td.not-current {
@@ -79,6 +93,7 @@ table.calendar thead {
 }
 
 .calendar-wrapper button {
+  z-index: 101;
   color: black;
   font-size: 3rem;
   background: none;
@@ -224,6 +239,7 @@ a.anim {
   text-decoration: none;
   color: #000;
   text-decoration: none;
+  font-family: "Unbounded";
 }
 
 a.anim::before {
@@ -272,6 +288,7 @@ a.anim-grey {
   text-decoration: none;
   color: grey;
   text-decoration: none;
+  font-family: "Unbounded";
 }
 
 a.anim-grey::before {
@@ -313,6 +330,7 @@ div.flash-info {
   padding: 10px;
   position: relative;
   margin: 10px;
+  z-index: 101;
 }
 
 div.flash-info p {
@@ -425,14 +443,15 @@ div.flash-info p {
 }
 
     .gallery img {
-        width: 300px;
-        height: 200px;
+        aspect-ratio: 1/1.5;
+        height: 50vh;
         object-fit: cover;
         margin: 0 10px;
         flex-shrink: 0;
         opacity: 0.3;
         transform: scale(0.9);
         transition: 0.3s ease-in-out;
+        border-radius:32px;
     }
 
         .gallery img.active {
@@ -449,53 +468,18 @@ div.flash-info p {
     .gallery-controls button {
         font-size: 20px;
         padding: 6px 18px;
-        margin: 0 10px;
+        margin: 5px 10px;
         cursor: pointer;
         background-color: #2c2c38;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 16px;
         transition: background 0.3s;
     }
 
         .gallery-controls button:hover {
             background-color: #444;
         }
-
-@media screen and (max-width: 600px)
-{
-  div.mainmenu div a {
-    font-size: 1rem;
-  }
-
-  div.mainmenu div:not(div.mainmenu, div:first-child) {
-    padding-left: 1.5rem;
-  }
-
-  .logoText {
-    font-size: 1.5rem;
-  }
-
-  .logoTextSec {
-    top: 5rem;
-  }
-
-  img.logo {
-    width: 5rem;
-  }
-
-  table.calendar td {
-    padding: 7.5px;
-  }
-
-  table.calendar {
-    font-size: 1rem;
-  }
-
-  input[type="submit"] {
-    font-size: 1rem;
-  }
-}
 
 .container {
     max-width: 900px;
@@ -669,7 +653,51 @@ h1, h2 {
     transition: color 0.3s ease;
 }
 
-    .media-text:hover {
-        color: #555;
-    }
+.media-text:hover {
+  color: #555;
+}
+
+@media screen and (max-width: 600px)
+{
+  div.mainmenu div a {
+    font-size: 1rem;
+  }
+
+  div.mainmenu div:not(div.mainmenu, div:first-child) {
+    padding-left: 1.5rem;
+  }
+
+  .logoText {
+    font-size: 1.5rem;
+  }
+
+  .logoTextSec {
+    top: 5rem;
+  }
+
+  img.logo {
+    width: 5rem;
+  }
+
+  table.calendar td {
+    padding: 7.5px;
+  }
+
+  table.calendar {
+    font-size: 1rem;
+  }
+
+  input[type="submit"] {
+    font-size: 1rem;
+  }
+
+  div.footer {
+    font-size: 0.75rem;
+  }
+
+  .social-btn {
+    font-size: 0.75rem;
+  }
+}
+
 
