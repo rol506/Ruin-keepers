@@ -14,7 +14,7 @@ html, body {
 
 div.mainmenu {
   position: static;
-  background-color: rgba(0, 0, 0, 1);
+  background-color: #2C2D39;
   padding: 0;
   margin: 0;
   display: flex;
@@ -32,6 +32,18 @@ div.mainmenu div a {
   color: white;
   text-decoration: none;
   font-size: 1.25rem;
+}
+
+div.footer {
+  position: static;
+  background: #2C2D39;
+  color: white;
+  font-weight: bolder;
+  font-size: 1.25rem;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 .logoText {
@@ -120,6 +132,7 @@ div.container {
 form.login {
   margin-top: 20px;
   background: #47695B;
+  align-items: center;;
   padding: 5px;
   padding-top: 1px;
   border-radius: 16px;
@@ -324,6 +337,7 @@ div.flash-info p {
     margin: auto;
     padding: 2rem;
     font-family: sans-serif;
+    min-height: 100vh;
 }
 
 .route-section {
@@ -425,14 +439,15 @@ div.flash-info p {
 }
 
     .gallery img {
-        width: 300px;
-        height: 200px;
+        aspect-ratio: 1/1.5;
+        height: 50vh;
         object-fit: cover;
         margin: 0 10px;
         flex-shrink: 0;
         opacity: 0.3;
         transform: scale(0.9);
         transition: 0.3s ease-in-out;
+        border-radius:32px;
     }
 
         .gallery img.active {
@@ -449,12 +464,12 @@ div.flash-info p {
     .gallery-controls button {
         font-size: 20px;
         padding: 6px 18px;
-        margin: 0 10px;
+        margin: 5px 10px;
         cursor: pointer;
         background-color: #2c2c38;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 16px;
         transition: background 0.3s;
     }
 
@@ -494,6 +509,10 @@ div.flash-info p {
 
   input[type="submit"] {
     font-size: 1rem;
+  }
+
+  div.footer {
+    font-size: 0.75rem;
   }
 }
 
