@@ -83,6 +83,18 @@ table.calendar thead {
   font-size: 3rem;
   background: none;
   border: none;
+  transition: 0.1s ease-in-out all;
+  height: min-content;
+  border-radius: 8px;
+  margin: 4px;
+}
+
+.calendar-wrapper button:hover {
+  background-color: #e3e3e3;
+}
+
+.calendar-wrapper button:active {
+  background: #828181;
 }
 
 table.receipt, table.receipt tr, table.receipt tr td {
