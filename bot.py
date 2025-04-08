@@ -54,6 +54,9 @@ async def get_event_time(message: Message, state: FSMContext):
         await state.set_state(None)
         await show_menu(message)
     else:
+        data = await state.get_data()
+        db.addEvent(data['event_name'], data['event_description'], data['event_date'], '12:00', 'none', 'нигде', 1000)
+        await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
         await state.set_state(None)
 
 # endregion
@@ -84,9 +87,12 @@ async def get_user_event(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            await state.update_data(user_event=int(message.text))
-            await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя.')
-            await state.set_state(RegisterUser.telegram_state)
+            if db.getEventById(message.text):
+                await state.update_data(user_event=int(message.text))
+                await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя.')
+                await state.set_state(RegisterUser.telegram_state)
+            else:
+                await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
         else:
             await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
 
