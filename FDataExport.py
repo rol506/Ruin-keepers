@@ -1,46 +1,60 @@
 import sqlite3
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+import pygsheets
+from FDataBase import FDataBase
 
-# coding=utf-8
+def FDataExport():
 
-class FDataExport:
-    def __init__(self):
-        # Подключение к Google Sheets
-        scope = [
-            "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive.file"
-        ]
-        creds = ServiceAccountCredentials.from_json_keyfile_name("ruin-keepers.json", scope)
-        client = gspread.authorize(creds)
+    # === Настройки ===
+    DATABASE_PATH = "flsite.db"
+    CREDENTIALS_PATH = "ruin-keepers.json"
+    SHEET_NAME = "database"
 
-        # Открытие таблицы
-        spreadsheet_list = client.openall()
-        for sheet in spreadsheet_list:
-            print(sheet.title)
+    # === Подключение к БД и Google Sheets ===
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.row_factory = sqlite3.Row  # Для работы с dict-подобным выводом
+    db = FDataBase(conn)
 
-        spreadsheet = client.open("database")
-        sheet = spreadsheet.sheet1
+    gc = pygsheets.authorize(service_file=CREDENTIALS_PATH)
 
-        # Подключение к SQLite
-        conn = sqlite3.connect("flsite.db")
-        cursor = conn.cursor()
+    # === Создание или открытие Google Sheet ===
+    try:
+        sh = gc.open(SHEET_NAME)
+    except pygsheets.SpreadsheetNotFound:
+        sh = gc.create(SHEET_NAME)
 
-        # Получить все события
-        cursor.execute("SELECT * FROM events")
-        rows = cursor.fetchall()
+    # === Функция записи таблицы ===
+    def export_table(table_name: str, data: list[sqlite3.Row], worksheet_index: int):
+        # Удаляем лист, если существует
+        try:
+            sh.del_worksheet(sh.worksheet('index', worksheet_index))
+        except Exception:
+            pass
 
-        # Заголовки
-        column_names = [description[0] for description in cursor.description]
-        sheet.insert_row(column_names, 1)
+        # Создаём новый лист
+        ws = sh.add_worksheet(table_name, rows=1000, cols=20, index=worksheet_index)
 
-        # Данные
-        for i, row in enumerate(rows, start=2):
-            sheet.insert_row(row, i)
+        if not data:
+            ws.update_value('A1', f"No data in table '{table_name}'")
+            return
 
-        print("Экспорт завершён.")
+        # Подготавливаем заголовки и строки
+        headers = list(data[0].keys())
+        rows = [headers] + [list(row) for row in data]
+
+        # Обновляем таблицу
+        ws.update_values('A1', rows)
 
 
-if __name__ == "__main__":
+    # === Получаем и экспортируем все таблицы ===
+    tables = [
+        ("events", db.getEvents()),
+        ("users", conn.cursor().execute("SELECT * FROM users").fetchall()),
+        ("admins", conn.cursor().execute("SELECT * FROM admins").fetchall())
+    ]
+
+    for i, (table_name, data) in enumerate(tables):
+        export_table(table_name, data, i)
+
+    print("✅ Экспорт завершён!")
+if "__name__" == "__main__":
     FDataExport()
