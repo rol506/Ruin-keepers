@@ -27,6 +27,7 @@ menu = [
             "title": "Галерея",
             "url": "/events/gallery"
         }
+
 ]
 
 def connect_db():

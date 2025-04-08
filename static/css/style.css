@@ -6,6 +6,10 @@ html, body {
   padding: 0;
   margin: 0;
   overflow-y: scroll;
+<<<<<<< Updated upstream
+=======
+  overflow-x: hidden;
+>>>>>>> Stashed changes
   width: 100vw;
   scroll-behavior: smooth;
   overflow-x:hidden;
@@ -354,6 +358,7 @@ div.flash-info p {
 
 
 
+<<<<<<< Updated upstream
 
 .gallery-wrapper {
     padding: 40px 20px;
@@ -652,3 +657,57 @@ h1, h2 {
     .media-text:hover {
         color: #555;
     }
+=======
+.gallery {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.arrow {
+    background: #2c2c38;
+    color: white;
+    font-size: 24px;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .arrow:hover {
+        background: #444455;
+    }
+
+.gallery-track {
+    display: flex;
+    transition: transform 0.4s;
+    gap: 16px;
+}
+
+.gallery-item {
+    flex: 0 0 200px;
+    height: 280px;
+    object-fit: cover;
+    opacity: 0.4;
+    transform: scale(0.95);
+    transition: 0.3s;
+}
+
+    .gallery-item.active {
+        opacity: 1;
+        transform: scale(1);
+        border: 3px solid #4196f3;
+        border-radius: 8px;
+    }
+
+
+
+
+    
+
+
+>>>>>>> Stashed changes

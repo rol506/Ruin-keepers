@@ -11,6 +11,7 @@
 <body>
     {% block body %}
     {{super()}}
+<<<<<<< Updated upstream
     <div class="gallery-wrapper">
         <div class="gallery-header">
             <h2>Галерея</h2>
@@ -63,12 +64,48 @@
 
         updateGallery();
     </script>
+=======
+    <div class="container">
+        <h1>Галерея</h1>
+
+        <div class="gallery">
+            <button class="arrow" onclick="scrollGallery(-1)">‹</button>
+
+            <div class="gallery-track" id="galleryTrack">
+                <img src="{{ url_for('static', filename='images/img1.jpg') }}" class="gallery-item">
+                <img src="{{ url_for('static', filename='images/img2.jpg') }}" class="gallery-item active">
+                <img src="{{ url_for('static', filename='images/img3.jpg') }}" class="gallery-item">
+                <img src="{{ url_for('static', filename='images/img4.jpg') }}" class="gallery-item">
+                <img src="{{ url_for('static', filename='images/img5.jpg') }}" class="gallery-item">
+            </div>
+
+            <button class="arrow" onclick="scrollGallery(1)">›</button>
+        </div>
+
+        <script>
+            let currentIndex = 1;
+
+            function scrollGallery(direction) {
+                const items = document.querySelectorAll('.gallery-item');
+                currentIndex = (currentIndex + direction + items.length) % items.length;
+
+                items.forEach((img, i) => {
+                    img.classList.toggle('active', i === currentIndex);
+                });
+
+                const offset = (currentIndex - 1) * 216; // 200px + 16px gap
+                document.getElementById('galleryTrack').style.transform = `translateX(-${offset}px)`;
+            }
+        </script>
+    </div>
+>>>>>>> Stashed changes
     {% endblock body %}
 </body>
 </html>
 
 
 
+<<<<<<< Updated upstream
 
 
 
@@ -87,3 +124,5 @@
 
 
 
+=======
+>>>>>>> Stashed changes
