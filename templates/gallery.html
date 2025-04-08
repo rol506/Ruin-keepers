@@ -11,60 +11,6 @@
 <body>
     {% block body %}
     {{super()}}
-<<<<<<< Updated upstream
-    <div class="gallery-wrapper">
-        <div class="gallery-header">
-            <h2>Галерея</h2>
-            <p>Здесь вы можете ознакомиться с фотографиями с мероприятий</p>
-        </div>
-
-        <div class="gallery-container">
-            <div class="gallery" id="gallery">
-                <img src="{{ url_for('static', filename='images/img1.jpg') }}" alt="Фото 1">
-                <img src="{{ url_for('static', filename='images/img2.jpg') }}" alt="Фото 2">
-                <img src="{{ url_for('static', filename='images/img3.jpg') }}" alt="Фото 3">
-                <img src="{{ url_for('static', filename='images/img4.jpg') }}" alt="Фото 4">
-                <img src="{{ url_for('static', filename='images/img5.jpg') }}" alt="Фото 5">
-                <img src="{{ url_for('static', filename='images/img6.jpg') }}" alt="Фото 6">
-            </div>
-        </div>
-
-        <div class="gallery-controls">
-            <button onclick="prevSlide()">←</button>
-            <button onclick="nextSlide()">→</button>
-        </div>
-    </div>
-
-    <script>
-        let index = 0;
-        const gallery = document.getElementById('gallery');
-        const images = gallery.querySelectorAll('img');
-
-        function updateGallery() {
-            images.forEach((img, i) => {
-                img.classList.remove('active');
-                if (i === index) {
-                    img.classList.add('active');
-                }
-            });
-
-            const offset = (images[0].clientWidth + 20) * (index - 2);
-            gallery.style.transform = `translateX(-${offset}px)`;
-        }
-
-        function nextSlide() {
-            if (index < images.length - 1) index++;
-            updateGallery();
-        }
-
-        function prevSlide() {
-            if (index > 0) index--;
-            updateGallery();
-        }
-
-        updateGallery();
-    </script>
-=======
     <div class="container">
         <h1>Галерея</h1>
 
@@ -98,31 +44,6 @@
             }
         </script>
     </div>
->>>>>>> Stashed changes
     {% endblock body %}
 </body>
 </html>
-
-
-
-<<<<<<< Updated upstream
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> Stashed changes

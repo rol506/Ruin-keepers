@@ -30,6 +30,11 @@ menu = [
 
 ]
 
+def getSliderPaths():
+    with open("main-slide-config.txt", "r") as f:
+        ls = f.read().replace("\n", "")
+        return ls.split(",")
+
 def connect_db():
     db = sqlite3.connect(app.config.get("DATABASE"))
     db.row_factory = sqlite3.Row
@@ -57,7 +62,7 @@ def close_db(error):
 @app.route("/home")
 @app.route("/index")
 def index():
-    return render_template("index.html", menu=menu)
+    return render_template("index.html", menu=menu, slides=getSliderPaths())
 
 #@app.route("/events")
 #def event_choose():
@@ -176,8 +181,9 @@ def eventsByDay(day):
 
     date = datetime.today().strftime('%Y-%m-')
     date += day
-    db = FDataBase(get_db())
+    db = FDataBase(connect_db())
     events = db.getEventsByDate(date)
+    print(len(events))
     return render_template("list_events.html", menu=menu, title="Мероприятия "+date, events=events, maxlen=0)
 
 @app.route("/events/walks", methods=["POST", "GET"])

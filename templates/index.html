@@ -35,7 +35,7 @@
 
         <div class="slider">
             <button class="prev">&#10094;</button>
-            <img id="slider-img" src="{{ url_for('static', filename='images/img1.jpg') }}" />
+            <img id="slider-img" src="{{ url_for('static', filename=slides[0]) }}" />
             <button class="next">&#10095;</button>
             <span class="caption">Фотографии с нашего мероприятия</span>
         </div>
@@ -75,7 +75,11 @@
     </div>
 
     <script >
-        const images = ["{{ url_for('static', filename='images/img1.jpg') }}", "{{ url_for('static', filename='images/img2.jpg') }}", "{{ url_for('static', filename='images/img3.jpg') }}", "{{ url_for('static', filename='images/img4.jpg') }}", "{{ url_for('static', filename='images/img5.jpg') }}", "{{ url_for('static', filename='images/img6.jpg') }}"]; 
+        const images = [
+          {% for s in slides %}
+            "{{url_for('static', filename=s)}}",
+          {% endfor %}
+        ]; 
         let current = 0;
 
         const sliderImg = document.getElementById("slider-img");
