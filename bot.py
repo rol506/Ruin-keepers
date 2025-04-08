@@ -13,6 +13,7 @@ from aiogram.fsm.context import FSMContext
 from SETTINGS import telegram_token
 
 from FDataBase import FDataBase
+from FDataExport import FDataExport
 from flsite import connect_db
 
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +26,9 @@ class CreateEvent (StatesGroup):
     name_state = State()
     description_state = State()
     time_state = State()
+    photo_state = State()
+    place_state = State()
+    cost_state = State()
 
 # region Создание мероприятия
 
@@ -55,9 +59,28 @@ async def get_event_time(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         data = await state.get_data()
-        db.addEvent(data['event_name'], data['event_description'], data['event_date'], '12:00', 'none', 'нигде', 1000)
-        await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
+        datestr = message.text.split()
+        if len(datestr) != 2:
+            await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+        else:
+            date = parse_date(datestr[0])
+            time = parse_time(datestr[1])
+            if date is None or time is None:
+                await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+            else:
+                db.addEvent(data['event_name'], data['event_description'], date, time, 'none', 'нигде',1000)
+                await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
+                await state.set_state(None)
+
+@dp.message(CreateEvent.photo_state)
+async def get_event_photo(message: Message, state: FSMContext):
+    if message.text == 'Назад':
         await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(event_photo=message.text)
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм.')
+        await state.set_state(CreateEvent.time_state)
 
 # endregion
 
@@ -127,8 +150,9 @@ async def get_user_birth(message: Message, state: FSMContext):
             data = await state.get_data()
 
             await bot.send_message(message.chat.id, f'{data['user_name']} успешно зарегистрирован(а) на мероприятие с ID {data['user_event']}.')
-            await db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
+            db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
             await state.set_state(None)
+            await show_menu(message)
         else:
             await bot.send_message(message.chat.id, 'С вашей датой что-то не так.')
 
@@ -156,6 +180,14 @@ async def parse_date(date):
         date = date.split('.')
         day, month, year = map(int, date)
         return datetime.date(year, month, day)
+    except:
+        return None
+
+async def parse_time(time):
+    try:
+        time = time.split(':')
+        h, m = map(int, time)
+        return datetime.time(h, m)
     except:
         return None
 
@@ -188,7 +220,8 @@ async def show_menu(message: Message):
     message_text = 'Выберите действие через кнопки внизу.'
     buttons = [
         [KeyboardButton(text='Взаимодействие со списком участников')],
-        [KeyboardButton(text='Взаимодействие со списком мероприятий')]
+        [KeyboardButton(text='Взаимодействие со списком мероприятий')],
+        [KeyboardButton(text='Экспортировать базу данных в google sheets')]
     ]
     if db.getAdminByLogin(message.from_user.username) == 'GreatAdmin':
         buttons += [[KeyboardButton(text='Добавление администратора')]]
@@ -242,6 +275,10 @@ async def receive_message(message: Message, state: FSMContext):
                                     'Он должен использовать команду /admin с вашим токеном. Токен действует только один раз. '
                                     'Одновременно действителен только один токен.')
                     buttons = [[KeyboardButton(text='Назад')]]
+            case 'Экспортировать базу данных в google sheets':
+                await bot.send_message(message.chat.id, 'Экспортируем...')
+                await FDataExport()
+                await bot.send_message(message.chat.id, 'Готово!')
 
         if message_text is not None:
             if buttons is not None:
