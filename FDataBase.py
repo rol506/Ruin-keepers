@@ -17,6 +17,13 @@ class FDataBase:
             print("Failed to add event to database:", str(e))
 
     def removeEventById(self, id):
+
+        #remove associated users
+        users = self.getUsersByEvent(id)
+        for u in users:
+            self.removeUserByPhone(u["phone"])
+
+        #remove the event
         sql = f"""DELETE FROM events WHERE id = '{id}'"""
         try:
             self.__cur.execute(sql)
@@ -65,6 +72,7 @@ class FDataBase:
         return []
 
     def addUser(self, eventID, name, telegram, phone, birth):
+        """None values will not be updated"""
         #if (telegram)
         sql = """INSERT INTO users (eventID, name, phone, birth, telegram) VALUES (?, ?, ?, ?, ?)"""
         #else:
@@ -107,7 +115,7 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to remove user by telegram:", str(e))
 
-    def getUsersBeEvent(self, eventID):
+    def getUsersByEvent(self, eventID):
         sql = f"""SELECT * FROM users WHERE eventID ='{eventID}'"""
         try:
             self.__cur.execute(sql)
