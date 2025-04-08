@@ -99,6 +99,26 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to update user data by id:", str(e))
 
+    def updateEvent(self, eventID, name, description, photoPath, cost, place, date, time, type='event'):
+        #get last record
+        event = self.getEventById(eventID)
+
+        name = event['name'] if name is None else name
+        description = event['description'] if description is None else description
+        photoPath = event['photoPath'] if photoPath is None else photoPath
+        cost = event['cost'] if cost is None else cost
+        place = event['place'] if place is None else place
+        date = event['date'] if date is None else date
+        time = event['time'] if time is None else time
+        type = event['type'] if type is None else type
+
+        sql = f"""UPDATE users SET name='{name}', description='{description}', photoPath='{photoPath}', cost='{cost}', place='{place}', date='{date}', time='{time}', type='{type}' WHERE id='{eventID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to update event data by id:", str(e))
+
     def removeUserByPhone(self, phone, eventID):
         sql = f"""DELETE FROM users WHERE phone='{phone}' AND eventID='{eventID}'"""
         try:

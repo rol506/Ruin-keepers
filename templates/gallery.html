@@ -11,43 +11,58 @@
 <body>
     {% block body %}
     {{super()}}
-    <div class="container">
-        <h1>Галерея</h1>
-
-        <div class="gallery">
-            <button class="arrow" style="position: absolute; left: 20px; z-index: 100;" onclick="scrollGallery(-1)">‹</button>
-
-            <div class="gallery-track" id="galleryTrack">
-              <img src="{{ url_for('static', filename=slides[-1]) }}" class="gallery-item active">
-              {% for s in range(slides|length -1) %}
-                <img src="{{ url_for('static', filename=slides[s]) }}" class="gallery-item">
-              {% endfor %}
-            </div>
-
-            <button class="arrow" style="position: absolute; right: 20px; z-index: 100;" onclick="scrollGallery(1)">›</button>
+    <div class="gallery-wrapper">
+        <div class="gallery-header">
+            <h2>Галерея</h2>
+            <p>Здесь вы можете ознакомиться с фотографиями с мероприятий</p>
         </div>
 
-        <script>
-            let currentIndex = 0;
+        <div class="gallery-container">
+            <div class="gallery" id="gallery">
+                <img src="{{ url_for('static', filename='images/img1.jpg') }}" alt="Фото 1">
+                <img src="{{ url_for('static', filename='images/img2.jpg') }}" alt="Фото 2">
+                <img src="{{ url_for('static', filename='images/img3.jpg') }}" alt="Фото 3">
+                <img src="{{ url_for('static', filename='images/img4.jpg') }}" alt="Фото 4">
+                <img src="{{ url_for('static', filename='images/img5.jpg') }}" alt="Фото 5">
+                <img src="{{ url_for('static', filename='images/img6.jpg') }}" alt="Фото 6">
+            </div>
+        </div>
 
-            const items = document.querySelectorAll('.gallery-item');
-
-
-            function scrollGallery(direction) {
-              if (currentIndex + direction < items.length && currentIndex + direction >= 0)
-              {
-                currentIndex = (currentIndex + direction + items.length) % items.length;
-
-                items.forEach((img, i) => {
-                    img.classList.toggle('active', i === currentIndex);
-                });
-
-                const offset = (currentIndex - 1) * 216; // 200px + 16px gap
-                document.getElementById('galleryTrack').style.transform = `translateX(-${offset}px)`;
-              }
-            }
-        </script>
+        <div class="gallery-controls">
+            <button onclick="prevSlide()">←</button>
+            <button onclick="nextSlide()">→</button>
+        </div>
     </div>
+
+    <script>
+        let index = 0;
+        const gallery = document.getElementById('gallery');
+        const images = gallery.querySelectorAll('img');
+
+        function updateGallery() {
+            images.forEach((img, i) => {
+                img.classList.remove('active');
+                if (i === index) {
+                    img.classList.add('active');
+                }
+            });
+
+            const offset = (images[0].clientWidth + 20) * (index - 2);
+            gallery.style.transform = `translateX(-${offset}px)`;
+        }
+
+        function nextSlide() {
+            if (index < images.length - 1) index++;
+            updateGallery();
+        }
+
+        function prevSlide() {
+            if (index > 0) index--;
+            updateGallery();
+        }
+
+        updateGallery();
+    </script>
     {% endblock body %}
 </body>
 </html>
