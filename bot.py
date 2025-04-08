@@ -9,6 +9,8 @@ from aiogram.filters import StateFilter
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, PhotoSize
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery
 
 from SETTINGS import telegram_token
 
@@ -439,24 +441,52 @@ async def get_user_birth_change(message: Message, state: FSMContext):
 class ViewUsers(StatesGroup):
     show = State()
 
-@dp.message(ViewUsers.show)
-async def show_users(message: Message, state: FSMContext):
-    users = db.getUsers()
+@dp.callback_query(ViewUsers.show)
+async def handle_user_navigation(callback: CallbackQuery, state: FSMContext, message: Message):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    data = await state.get_data()
+    users = data.get("users", [])
+    index = data.get("index", 0)
+
     if not users:
-        await bot.send_message(message.chat.id, "Нет зарегистрированных пользователей.")
+        await callback.message.edit_text("Список участников пуст.")
+        await state.clear()
+        return
+
+    # Определяем направление
+    if callback.data.startswith("prev_"):
+        index = max(0, int(callback.data.split("_")[1]))
+    elif callback.data.startswith("next_"):
+        index = min(len(users) - 1, int(callback.data.split("_")[1]))
     else:
-        for user in users:
-            text = (
-                f"🆔 ID: {user['id']}\n"
-                f"👤 ФИО: {user['name']}\n"
-                f"📞 Телефон: {user['phone']}\n"
-                f"🎂 Дата рождения: {user['birth']}\n"
-                f"📬 Telegram: {user['telegram'] or '—'}\n"
-                f"🗓️ ID мероприятия: {user['eventID']}"
-            )
-            await bot.send_message(message.chat.id, text)
-    await state.set_state(None)
-    await show_menu(message)
+        await callback.answer("Некорректная кнопка.")
+        return
+
+    await state.update_data(index=index)
+    user = users[index]
+
+    text = (
+        f"🆔 ID: {user['id']}\n"
+        f"👤 ФИО: {user['name']}\n"
+        f"📞 Телефон: {user['phone']}\n"
+        f"🎂 Дата рождения: {user['birth']}\n"
+        f"📬 Telegram: {user['telegram'] or '—'}\n"
+        f"🗓️ ID мероприятия: {user['eventID']}"
+    )
+
+    buttons = []
+    if index > 0:
+        buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
+    if index < len(users) - 1:
+        buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
+
+    await callback.message.edit_text(text, reply_markup=keyboard)
+    await callback.answer()
+# endregion
 
 # endregion
 async def verify_admin(token):
@@ -577,10 +607,6 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Введите ID записи.'
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(ChangeRegistration.id_state)
-            case 'Вывести список участников':
-                message_text = 'Выводим...'
-                buttons = [[KeyboardButton(text='Назад')]]
-                await state.set_state(ViewUsers.show)
             case 'Добавить мероприятие':
                 message_text = 'Введите название мероприятия.'
                 buttons = [[KeyboardButton(text='Назад')]]
@@ -606,6 +632,31 @@ async def receive_message(message: Message, state: FSMContext):
                 await bot.send_message(message.chat.id, 'Экспортируем...')
                 await FDataExport()
                 await bot.send_message(message.chat.id, 'Готово!')
+            case 'Вывести список участников':
+                buttons = [[KeyboardButton(text='Назад')]]
+                users = db.getUsers()
+                if not users:
+                    await bot.send_message(message.chat.id, "Список участников пуст.")
+                    return
+
+                await state.set_state(ViewUsers.show)
+                await state.update_data(users=users, index=0)
+
+                user = users[0]
+                text = (
+                    f"🆔 ID: {user['id']}\n"
+                    f"👤 ФИО: {user['name']}\n"
+                    f"📞 Телефон: {user['phone']}\n"
+                    f"🎂 Дата рождения: {user['birth']}\n"
+                    f"📬 Telegram: {user['telegram'] or '—'}\n"
+                )
+                buttons = []
+                if len(users) > 1:
+                    buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
+                keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else [])  # Передаем пустой список, если кнопок нет
+                
+                await bot.send_message(message.chat.id, text, reply_markup=keyboard)
+
 
         if message_text is not None:
             if buttons is not None:
