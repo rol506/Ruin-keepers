@@ -68,23 +68,8 @@ async def get_event_time(message: Message, state: FSMContext):
                 await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
             else:
                 await state.update_data(event_date=str(date), event_time=str(time))
-                await state.set_state(CreateEvent.photo_state)
-                await bot.send_message(message.chat.id, 'Пришлите фотографию, чтобы привязать её к мероприятию.')
-
-@dp.message(CreateEvent.photo_state)
-async def get_event_photo(message: Message, state: FSMContext):
-    if message.text == 'Назад':
-        await state.set_state(None)
-        await show_menu(message)
-    else:
-        if message.photo is None:
-            await bot.send_message(message.chat.id, 'В вашем сообщении нет фотографии.')
-        else:
-            path = 'static/images/custom/' + await create_photo()
-            await bot.download(message.photo[0].file_id, path)
-            await state.update_data(event_photo=path)
-            await bot.send_message(message.chat.id, 'Введите место проведения мероприятия.')
-            await state.set_state(CreateEvent.place_state)
+                await state.set_state(CreateEvent.place_state)
+                await bot.send_message(message.chat.id, 'Введите место проведения мероприятия.')
 
 @dp.message(CreateEvent.place_state)
 async def get_event_place(message: Message, state: FSMContext):
@@ -103,15 +88,172 @@ async def get_event_cost(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         if message.text.isnumeric():
-            data = await state.get_data()
-            cost = int(float(message.text) * 100)
-
-            db.addEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'], data['event_photo'], data['event_place'], cost)
-            await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
-            await state.set_state(None)
+            await state.update_data(event_cost=int(float(message.text) * 100))
+            await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию.')
+            await state.set_state(CreateEvent.photo_state)
         else:
             await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
 
+@dp.message(CreateEvent.photo_state)
+async def get_event_photo(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.photo is None:
+            await bot.send_message(message.chat.id, 'В вашем сообщении нет фотографии.')
+        else:
+
+            data = await state.get_data()
+
+            path = await create_photo()
+            await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
+            db.addEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'],
+                        path, data['event_place'], data['event_cost'])
+            await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
+            await state.set_state(None)
+
+# endregion
+
+class DeleteEvent (StatesGroup):
+    id_state = State()
+
+# region Удаление мероприятия
+
+@dp.message(DeleteEvent.id_state)
+async def get_event_id_delete(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getEventById(message.text):
+                db.removeEventById(message.text)
+                await state.set_state(None)
+                await bot.send_message(message.chat.id, 'Мероприятие успешно удалено.')
+                await show_menu(message)
+            else:
+                await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+
+# endregion
+
+class ChangeEvent (StatesGroup):
+    id_state = State()
+    name_state = State()
+    description_state = State()
+    time_state = State()
+    photo_state = State()
+    place_state = State()
+    cost_state = State()
+
+# region Изменение мероприятия
+
+@dp.message(ChangeEvent.id_state)
+async def get_event_id_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getEventById(message.text):
+                await state.set_state(ChangeEvent.name_state)
+                await state.update_data(event_id=message.text)
+                await bot.send_message(message.chat.id, 'Введите название мероприятия. (Введите точку, чтобы оставить прежним)')
+            else:
+                await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+
+@dp.message(ChangeEvent.name_state)
+async def get_event_name_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(event_name=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите описание мероприятия. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeEvent.description_state)
+
+@dp.message(ChangeEvent.description_state)
+async def get_event_description_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(event_description=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите дату и время начала мероприятия в формате дд.мм.гггг чч:мм. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeEvent.time_state)
+
+@dp.message(ChangeEvent.time_state)
+async def get_event_time_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text == '.':
+            await state.update_data(event_date=None, event_time=None)
+            await state.set_state(ChangeEvent.place_state)
+            await bot.send_message(message.chat.id,
+                                   'Введите место проведения мероприятия. (Введите точку, чтобы оставить прежним)')
+        datestr = message.text.split()
+        if len(datestr) != 2:
+            await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+        else:
+            date = await parse_date(datestr[0])
+            time = await parse_time(datestr[1])
+            if date is None or time is None:
+                await bot.send_message(message.chat.id, 'Что-то не так с вашей датой.')
+            else:
+                await state.update_data(event_date=str(date), event_time=str(time))
+                await state.set_state(ChangeEvent.place_state)
+                await bot.send_message(message.chat.id, 'Введите место проведения мероприятия. (Введите точку, чтобы оставить прежним)')
+
+@dp.message(ChangeEvent.place_state)
+async def get_event_place_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        await state.update_data(event_place=message.text if message.text != '.' else None)
+        await bot.send_message(message.chat.id, 'Введите стоимость мероприятия в рублях. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeEvent.cost_state)
+
+@dp.message(ChangeEvent.cost_state)
+async def get_event_cost_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric() or message.text == '.':
+            await state.update_data(event_cost=int(float(message.text) * 100) if message.text != '.' else None)
+            await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию. (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeEvent.photo_state)
+        else:
+            await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
+
+@dp.message(ChangeEvent.photo_state)
+async def get_event_photo_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.photo is None and message.text != '.':
+            await bot.send_message(message.chat.id, 'В вашем сообщении нет фотографии.')
+            return
+
+        data = await state.get_data()
+        path = None
+
+        if message.photo is not None:
+            path = await create_photo()
+            await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
+
+        db.updateEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'],
+                    path, data['event_place'], data['event_cost'])
+        await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
+        await state.set_state(None)
 
 # endregion
 
@@ -189,14 +331,57 @@ async def get_user_birth(message: Message, state: FSMContext):
 
 # endregion
 
+class DeleteRegistration (StatesGroup):
+    id_state = State()
+
+# region Удаление регистрации
+
+@dp.message(DeleteRegistration.id_state)
+async def get_user_id_delete(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getUserById(message.text):
+                db.removeUserById(message.text)
+                await state.set_state(None)
+                await bot.send_message(message.chat.id, 'Запись успешно удалена.')
+                await show_menu(message)
+            else:
+                await bot.send_message(message.chat.id, 'Такой записи не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+
+
+# endregion
+
 class ChangeRegistration (StatesGroup):
-    event_state = State()
+    id_state = State()
     name_state = State()
     telegram_state = State()
     phone_state = State()
     birth_state = State()
 
 # region Изменение регистрации
+
+@dp.message(ChangeRegistration.id_state)
+async def get_user_id_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getUserById(int(message.text)):
+                await state.update_data(user_id=int(message.text))
+                await bot.send_message(message.chat.id,
+                                       'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя. '
+                                       '(Введите точку, чтобы оставить прежним)')
+                await state.set_state(ChangeRegistration.name_state)
+            else:
+                await bot.send_message(message.chat.id, 'Такой записи не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'В ID могут быть только цифры.')
 
 @dp.message(ChangeRegistration.name_state)
 async def get_user_name_change(message: Message, state: FSMContext):
@@ -205,25 +390,8 @@ async def get_user_name_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(user_name=message.text if message.text != '.' else None)
-        await bot.send_message(message.chat.id, 'Введите ID мероприятия, на которое хотите зарегистрировать этого пользователя. '
-                                                '(Введите точку, чтобы оставить прежним)')
-        await state.set_state(ChangeRegistration.event_state)
-
-@dp.message(ChangeRegistration.event_state)
-async def get_user_event_change(message: Message, state: FSMContext):
-    if message.text == 'Назад':
-        await state.set_state(None)
-        await show_menu(message)
-    else:
-        if message.text.isnumeric() or message.text == '.':
-            if db.getEventById(message.text) or message.text == '.':
-                await state.update_data(user_event=int(message.text) if message.text != '.' else None)
-                await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя. (Введите точку, чтобы оставить прежним)')
-                await state.set_state(ChangeRegistration.telegram_state)
-            else:
-                await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
-        else:
-            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+        await bot.send_message(message.chat.id, 'Введите телеграм этого пользователя. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeRegistration.telegram_state)
 
 @dp.message(ChangeRegistration.telegram_state)
 async def get_user_telegram_change(message: Message, state: FSMContext):
@@ -261,8 +429,7 @@ async def get_user_birth_change(message: Message, state: FSMContext):
         data = await state.get_data()
 
         await bot.send_message(message.chat.id, f'Запись успешно изменена.')
-        db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
-        # TODO: функция чтобы менять запись
+        db.updateUser(data['user_id'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
         await state.set_state(None)
         await show_menu(message)
 
@@ -284,7 +451,7 @@ async def create_photo():
         id = int(file.read())
         file.seek(0)
         file.write(str(id + 1))
-    return str(id) + '.jpg'
+    return 'image' + str(id) + '.jpg'
 
 
 async def generate_token(username):
@@ -377,18 +544,25 @@ async def receive_message(message: Message, state: FSMContext):
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(RegisterUser.name_state)
             case 'Выписать участника с мероприятия':
-                pass
+                message_text = 'Введите ID записи.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(DeleteRegistration.id_state)
             case 'Изменить запись':
-
-                pass
+                message_text = 'Введите ID записи.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(ChangeRegistration.id_state)
             case 'Добавить мероприятие':
                 message_text = 'Введите название мероприятия.'
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(CreateEvent.name_state)
             case 'Удалить мероприятие':
-                pass
+                message_text = 'Введите ID мероприятия.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(DeleteEvent.id_state)
             case 'Изменить мероприятие':
-                pass
+                message_text = 'Введите ID мероприятия.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(ChangeEvent.id_state)
             case 'Добавление администратора':
                 if db.getAdminByLogin(message.from_user.username) == 'GreatAdmin':
                     token = await generate_token(message.from_user.username)
