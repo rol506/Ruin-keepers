@@ -94,7 +94,7 @@ async def get_event_cost(message: Message, state: FSMContext):
         if message.text.isnumeric():
             await state.update_data(event_cost=int(float(message.text) * 100))
             await bot.send_message(message.chat.id, 'Будет ли обед на мероприятии? Введите да или нет.')
-            await state.set_state(CreateEvent.photo_state)
+            await state.set_state(CreateEvent.lunch_state)
         else:
             await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
 
@@ -266,7 +266,7 @@ async def get_event_cost_change(message: Message, state: FSMContext):
         if message.text.isnumeric() or message.text == '.':
             await state.update_data(event_cost=int(float(message.text) * 100) if message.text != '.' else None)
             await bot.send_message(message.chat.id, 'Будет ли обед на мероприятии? Введите да или нет. (Введите точку, чтобы оставить прежним)')
-            await state.set_state(ChangeEvent.photo_state)
+            await state.set_state(ChangeEvent.lunch_state)
         else:
             await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
 
