@@ -836,6 +836,7 @@ async def receive_message(message: Message, state: FSMContext):
                 await bot.send_message(message.chat.id, 'Готово!')
             case 'Вывести список участников':
                 buttons = [[KeyboardButton(text='Назад')]]
+                await bot.send_message(message.chat.id, 'Список участников:', reply_markup=ReplyKeyboardMarkup(keyboard=buttons))
                 users = db.getUsers()
                 if not users:
                     await bot.send_message(message.chat.id, "Список участников пуст.")
@@ -857,6 +858,7 @@ async def receive_message(message: Message, state: FSMContext):
                 await bot.send_message(message.chat.id, text, reply_markup=keyboard)
             case 'Вывести список мероприятий':
                 buttons = [[KeyboardButton(text='Назад')]]
+                await bot.send_message(message.chat.id, 'Список мероприятий:', reply_markup=ReplyKeyboardMarkup(keyboard=buttons))
                 events = db.getEvents()
                 if not events:
                     await bot.send_message(message.chat.id, "Список мероприятий пуст.")
