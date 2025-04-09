@@ -9,7 +9,7 @@ class FDataBase:
         self.__db.close()
 
     def addEvent(self, name, description, date, time, photoPath, place, cost: int, lunchCost=-1, tpe="event"):
-        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, luchCost, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, lunchCost, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         try:
             self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time, lunchCost, tpe))
             self.__db.commit()
