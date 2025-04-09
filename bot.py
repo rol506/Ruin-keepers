@@ -672,11 +672,33 @@ async def get_event_data(event):
         f"🏠 Место: {event['place']}\n"
         f"📆 Дата: {event['date']}\n"
         f"🕒 Время: {event['time']}\n"
-        f"🍽️ Обед: {str(event['lunchCost'] // 100) + ' руб.' if event['lunchCost'] >= 0 else 'Не включён'}"
+        f"🍽️ Обед: {str(event['lunchCost'] / 100) + ' руб.' if event['lunchCost'] >= 0 else 'Не включён'}"
     )
     return text
 
 # endregion
+# region Сделать СуперАдмином
+class AddGreatAdmin (StatesGroup):
+    id_state = State()
+
+@dp.message(AddGreatAdmin.id_state)
+async def get_admin_id_update(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getAdminByID(int(message.text)):
+                await state.set_state(None)
+                db.updateAdmin(message.text, "GreatAdmin")
+                await bot.send_message(message.chat.id, 'Администратор успешно изменён.')
+                await show_menu(message)
+            else:
+                await bot.send_message(message.chat.id, 'Такой записи не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'В ID могут быть только цифры.')
+# endregion
+
 # region Удалить администратора
 class DeleteAdmin (StatesGroup):
     id_state = State()
@@ -698,7 +720,8 @@ async def get_admin_id_delete(message: Message, state: FSMContext):
         else:
             await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
 # endregion
-# region Вывод списка flvbybcnhfnjhjd
+
+# region Вывод списка администраторов
 
 class ViewAdmins(StatesGroup):
     show = State()
@@ -744,7 +767,7 @@ async def handle_admins_navigation(callback: CallbackQuery, state: FSMContext, m
     buttons = []
     if index > 0:
         buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
-    if (index + 1) * 3 < len(admin):
+    if (index + 1) * 3 < len(admins):
         buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
@@ -756,12 +779,13 @@ async def get_admin_data(admin):
     text = (
         f"🆔 ID: {admin['id']}\n"
         f"📬 Telegram: {admin['login']}\n"
-        f"📬 Роль: {admin['role'] or '—'}\n"
+        f"🚹 Роль: {"СуперАдмин" if admin['role'] == "GreatAdmin" else 'Админ'}\n"
 
     )
     return text
 
 # endregion
+
 # region Misc
 
 async def verify_admin(token):
@@ -887,7 +911,8 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Выберите действие.'
                 buttons = [
                 [KeyboardButton(text='Добавление администратора'),
-                 KeyboardButton(text='Удалить администратора')
+                 KeyboardButton(text='Удалить администратора'),
+                 KeyboardButton(text='Сделать СуперАдмином')
                  ],
                 [KeyboardButton(text='Вывести список администраторов')],
                 [KeyboardButton(text='Назад')]
@@ -916,6 +941,10 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Введите ID мероприятия.'
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(ChangeEvent.id_state)
+            case 'Сделать СуперАдмином':
+                message_text = 'Введите ID администратора.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(AddGreatAdmin.id_state)
             case 'Удалить администратора':
                 message_text = 'Введите ID администратора.'
                 buttons = [[KeyboardButton(text='Назад')]]

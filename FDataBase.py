@@ -308,7 +308,7 @@ class FDataBase:
             res = self.__cur.fetchone()
             if res: return res
         except sqlite3.Error as e:
-            print("Failed to get user by id:", str(e))
+            print("Failed to get admin by id:", str(e))
         return {}
     def removeAdminByID(self, AdminID):
         sql = f"""DELETE FROM admins WHERE id='{AdminID}'"""
@@ -316,4 +316,15 @@ class FDataBase:
             self.__cur.execute(sql)
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Failed to remove user by id:", str(e))
+            print("Failed to remove admin by id:", str(e))
+    def updateAdmin(self, adminID, role):
+        #get last record
+        adm = self.getAdminByID(adminID)
+        role = adm['role'] if role is None else role
+        
+        sql = f"""UPDATE admins SET role='{role}' WHERE id='{adminID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to update adm data by id:", str(e))
