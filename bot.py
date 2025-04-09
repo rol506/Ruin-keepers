@@ -643,11 +643,11 @@ async def handle_events_navigation(callback: CallbackQuery, state: FSMContext, m
         return
 
     await state.update_data(index=index)
-    user = events[index * 3]
+    event = events[index * 3]
 
-    text = await get_user_data(user)
+    text = await get_event_data(event)
     for i in range(index * 3 + 1, min(index * 3 + 3, len(events))):
-        text += '\n\n' + await get_user_data(events[i])
+        text += '\n\n' + await get_event_data(events[i])
 
     buttons = []
     if index > 0:
