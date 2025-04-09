@@ -11,6 +11,10 @@
     {% block body %}
       {{super()}}
       <div class="container">
+        {% if not events %}
+        <h1 style="font-size: 2.5rem; margin-bottom: 400px;">В этот день мероприятий не запланировано!</h1>
+        {% else %}
+
         {% for e in events %}
           <div class="eventDesc">
             <p><span style="font-size: 2rem; font-weight: bolder">{{e.name}}</span> <span style="color: grey">{{e.date}}</span></p>
@@ -26,6 +30,7 @@
             <hr>
           </div>
         {% endfor %}
+        {% endif %}
       </div>
     {% endblock body %}
 

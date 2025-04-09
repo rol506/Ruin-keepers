@@ -173,7 +173,7 @@ def events():
     db = FDataBase(get_db())
 
     date = datetime.datetime.now().strftime("%Y-%m")
-    events = db.getEventsByMonth(date)
+    events = db.getEvents()
     return render_template("events.html", menu=menu, events=events)
 
 @app.route("/events/day/<year>/<month>/<day>", methods=["POST", "GET"])
