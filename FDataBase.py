@@ -292,14 +292,14 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to remove admin by login:", str(e))
     def getAdmin(self):
-        sql = """SELECT * FROM users"""
+        sql = """SELECT * FROM admins"""
         try:
             self.__cur.execute(sql)
             res = self.__cur.fetchall()
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Failed to get users:", str(e))
+            print("Failed to get admins:", str(e))
         return []
     def getAdminByID(self, id):
         sql = f"""SELECT * FROM admins WHERE id = '{id}'"""
