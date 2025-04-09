@@ -8,10 +8,10 @@ class FDataBase:
     def __del__(self):
         self.__db.close()
 
-    def addEvent(self, name, description, date, time, photoPath, place, cost: int, type="event"):
-        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+    def addEvent(self, name, description, date, time, photoPath, place, cost: int, lunchCost=-1, tpe="event"):
+        sql = """INSERT INTO events (name, description, photoPath, place, cost, date, time, luchCost, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         try:
-            self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time, type))
+            self.__cur.execute(sql, (name, description.replace("\n", "<br>"), photoPath, place, cost, date, time, lunchCost, tpe))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to add event to database:", str(e))
@@ -81,7 +81,7 @@ class FDataBase:
             print("Failed to get all events:", str(e))
         return []
 
-    def updateEvent(self, eventID, name, description=None, date=None, time=None, photoPath=None, place=None, cost: int=None, tpe="event"):
+    def updateEvent(self, eventID, name, description=None, date=None, time=None, photoPath=None, place=None, cost: int=None,  lunchCost=None, tpe="event"):
         """None values will not be updated"""
         ev = self.getEventByID(eventID)
 
@@ -95,9 +95,10 @@ class FDataBase:
         place = ev['place'] if place is None else place
         cost = ev['cost'] if cost is None else cost
         tpe = ev['type'] if tpe is None else tpe
+        lunchCost = ev["lunchCost"] if lunchCost is None else lunchCost
 
         sql = f"""UPDATE events SET name='{name}', description='{description}', date='{date}', time='{time}', photoPath='{photoPath}',
-                                    place='{place}', cost='{cost}', type='{tpe}' WHERE id='{eventID}'"""
+                                    place='{place}', cost='{cost}', lunchCost='{lunchCost}', type='{tpe}' WHERE id='{eventID}'"""
 
         try:
             self.__cur.execute(sql)
@@ -105,19 +106,18 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to update event by id:", str(e))
 
-    def addUser(self, eventID, name, telegram, phone, birth):
-        """None values will not be updated"""
+    def addUser(self, eventID, name, telegram, phone, birth, lunch: int):
         #if (telegram)
-        sql = """INSERT INTO users (eventID, name, phone, birth, telegram) VALUES (?, ?, ?, ?, ?)"""
+        sql = """INSERT INTO users (eventID, name, phone, birth, telegram, lunch) VALUES (?, ?, ?, ?, ?, ?)"""
         #else:
             #sql = """INSERT INTO users(eventID, name, phone, birth) VALUES (?, ?, ?, ?)"""
         try:
-            self.__cur.execute(sql, (eventID, name, phone, birth, telegram))
+            self.__cur.execute(sql, (eventID, name, phone, birth, telegram, lunch))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to add user:", str(e))
 
-    def updateUser(self, userID, name, telegram, phone, birth):
+    def updateUser(self, userID, name, telegram, phone, birth, lunch):
         #get last record
         usr = self.getUserByID(userID)
 
@@ -125,8 +125,9 @@ class FDataBase:
         telegram = usr['telegram'] if telegram is None else telegram
         phone = usr['phone'] if phone is None else phone
         birth = usr['birth'] if birth is None else birth
+        lunch = usr["lunch"] if lunch is None else lunch
 
-        sql = f"""UPDATE users SET name='{name}', telegram='{telegram}', phone='{phone}', birth='{birth}' WHERE id='{userID}'"""
+        sql = f"""UPDATE users SET name='{name}', telegram='{telegram}', phone='{phone}', birth='{birth}', lunch='{lunch}' WHERE id='{userID}'"""
         try:
             self.__cur.execute(sql)
             self.__db.commit()
