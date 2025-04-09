@@ -517,15 +517,14 @@ h1, h2 {
 
 .social {
     margin-top: 2rem;
-    text-align: right;
+    text-align: center;
 }
 
 .social-row {
     display: flex;
     align-items: center;
     margin-bottom: 12px;
-    justify-content: right;
-
+    justify-content: center;
 }
 
 .social-icon {
@@ -558,7 +557,7 @@ h1, h2 {
     transition: background 0.3s ease;
     width: 40%;
     max-width: 400px;
-    font-size: 1.5em;
+    font-size: 1rem;
 }
 
     .social-btn:hover {
@@ -582,7 +581,7 @@ h1, h2 {
     border-radius: 10px;
     transition: background 0.2s ease;
     font-size: 1.5em;
-
+    margin-left: auto;
 }
 
     .donate-btn:hover {
@@ -630,7 +629,8 @@ h1, h2 {
     }
     .social, .donate {
         width: 70vw;
-
+        display: flex;
+        flex-direction: column;
     }
 .media-link {
     display: flex;
