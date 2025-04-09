@@ -601,7 +601,7 @@ async def get_user_data(user):
         f"🎂 Дата рождения: {user['birth']}\n"
         f"📬 Telegram: {user['telegram'] or '—'}\n"
         f"🗓️ ID мероприятия: {user['eventID']}\n"
-        f" Обед: {'Оплачен' if user['lunch'] else 'Нет'}\n"
+        f"🍽️ Обед: {'Оплачен' if user['lunch'] else 'Нет'}\n"
     )
     return text
 
@@ -666,11 +666,11 @@ async def get_event_data(event):
         f"🆔 ID: {event['id']}\n"
         f"🚩 Название: {event['name']}\n"
         f"📃 Описание: {event['description']}\n"
-        f" Стоимость: {event['cost']}\n"
-        f" Место: {event['place']}\n"
-        f" Дата: {event['date']}\n"
-        f" Время: {event['time']}\n"
-        f" Обед: {str(event['lunchCost'] // 100) + ' руб.' if event['lunchCost'] >= 0 else 'Не включён'}"
+        f"💳 Стоимость: {event['cost']}\n"
+        f"🏠 Место: {event['place']}\n"
+        f"📆 Дата: {event['date']}\n"
+        f"🕒 Время: {event['time']}\n"
+        f"🍽️ Обед: {str(event['lunchCost'] // 100) + ' руб.' if event['lunchCost'] >= 0 else 'Не включён'}"
     )
     return text
 
