@@ -248,6 +248,16 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to get user by id:", str(e))
         return {}
+    def getUsers(self):
+        sql = """SELECT * FROM users"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Failed to get users:", str(e))
+        return []
 
     def addAdmin(self, login, role: bool):
         """if role -> admin role is GreatAdmin else just admin"""
@@ -281,7 +291,7 @@ class FDataBase:
             self.__db.commit()
         except sqlite3.Error as e:
             print("Failed to remove admin by login:", str(e))
-    def getUsers(self):
+    def getAdmin(self):
         sql = """SELECT * FROM users"""
         try:
             self.__cur.execute(sql)
@@ -291,4 +301,19 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Failed to get users:", str(e))
         return []
-
+    def getAdminByID(self, id):
+        sql = f"""SELECT * FROM admins WHERE id = '{id}'"""
+        try:
+            self.__cur.execute(sql)
+            res = self.__cur.fetchone()
+            if res: return res
+        except sqlite3.Error as e:
+            print("Failed to get user by id:", str(e))
+        return {}
+    def removeAdminByID(self, AdminID):
+        sql = f"""DELETE FROM admins WHERE id='{AdminID}'"""
+        try:
+            self.__cur.execute(sql)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Failed to remove user by id:", str(e))

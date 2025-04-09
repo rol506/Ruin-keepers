@@ -677,7 +677,91 @@ async def get_event_data(event):
     return text
 
 # endregion
+# region Удалить администратора
+class DeleteAdmin (StatesGroup):
+    id_state = State()
 
+@dp.message(DeleteAdmin.id_state)
+async def get_admin_id_delete(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            if db.getAdminByID(message.text):
+                db.removeAdminByID(message.text)
+                await bot.send_message(message.chat.id, 'Администратор успешно удален.')
+                await state.set_state(None)
+                await show_menu(message)
+            else:
+                await bot.send_message(message.chat.id, 'Такого администратора не существует.')
+        else:
+            await bot.send_message(message.chat.id, 'ID должен состоять только из цифр, попробуйте ещё раз.')
+# endregion
+# region Вывод списка flvbybcnhfnjhjd
+
+class ViewAdmins(StatesGroup):
+    show = State()
+
+@dp.message(ViewAdmins.show)
+async def user_navigation_quit(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+        return
+
+@dp.callback_query(ViewAdmins.show)
+async def handle_admins_navigation(callback: CallbackQuery, state: FSMContext, message: Message = None):
+    if message is not None and message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+        return
+
+    data = await state.get_data()
+    admins = data.get("admins", [])
+    index = data.get("index", 0)
+
+    if not admins:
+        await callback.message.edit_text("Список администраторов пуст.")
+        await state.clear()
+        return
+
+    if callback.data.startswith("prev_"):
+        index = max(0, int(callback.data.split("_")[1]))
+    elif callback.data.startswith("next_"):
+        index = min((len(admins) - 1) // 3, int(callback.data.split("_")[1]))
+    else:
+        await callback.answer("Некорректная кнопка.")
+        return
+
+    await state.update_data(index=index)
+    admin = admins[index * 3]
+
+    text = await get_admin_data(admin)
+    for i in range(index * 3 + 1, min(index * 3 + 3, len(admins))):
+        text += '\n\n' + await get_admin_data(admins[i])
+
+    buttons = []
+    if index > 0:
+        buttons.append(InlineKeyboardButton(text="◀️", callback_data=f"prev_{index - 1}"))
+    if (index + 1) * 3 < len(admin):
+        buttons.append(InlineKeyboardButton(text="▶️", callback_data=f"next_{index + 1}"))
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons] if buttons else None)
+
+    await callback.message.edit_text(text, reply_markup=keyboard)
+    await callback.answer()
+
+async def get_admin_data(admin):
+    text = (
+        f"🆔 ID: {admin['id']}\n"
+        f"📬 Telegram: {admin['login']}\n"
+        f"📬 Роль: {admin['role'] or '—'}\n"
+
+    )
+    return text
+
+# endregion
 # region Misc
 
 async def verify_admin(token):
@@ -768,7 +852,7 @@ async def show_menu(message: Message):
         [KeyboardButton(text='Экспортировать базу данных в google sheets')]
     ]
     if db.getAdminByLogin(message.from_user.username) == 'GreatAdmin':
-        buttons += [[KeyboardButton(text='Добавление администратора')]]
+        buttons += [[KeyboardButton(text='Взаимодействие со списком администраторов')]]
     keyboard = ReplyKeyboardMarkup(keyboard=buttons)
 
     await bot.send_message(message.chat.id, message_text, reply_markup=keyboard)
@@ -799,6 +883,15 @@ async def receive_message(message: Message, state: FSMContext):
                     [KeyboardButton(text='Вывести список мероприятий')],
                     [KeyboardButton(text='Назад')]
                 ]
+            case 'Взаимодействие со списком администраторов':
+                message_text = 'Выберите действие.'
+                buttons = [
+                [KeyboardButton(text='Добавление администратора'),
+                 KeyboardButton(text='Удалить администратора')
+                 ],
+                [KeyboardButton(text='Вывести список администраторов')],
+                [KeyboardButton(text='Назад')]
+            ]
             case 'Записать участника на мероприятие':
                 message_text = 'Введите ФИО пользователя, которого хотите записать на мероприятие.'
                 buttons = [[KeyboardButton(text='Назад')]]
@@ -823,6 +916,10 @@ async def receive_message(message: Message, state: FSMContext):
                 message_text = 'Введите ID мероприятия.'
                 buttons = [[KeyboardButton(text='Назад')]]
                 await state.set_state(ChangeEvent.id_state)
+            case 'Удалить администратора':
+                message_text = 'Введите ID администратора.'
+                buttons = [[KeyboardButton(text='Назад')]]
+                await state.set_state(DeleteAdmin.id_state)
             case 'Добавление администратора':
                 if db.getAdminByLogin(message.from_user.username) == 'GreatAdmin':
                     token = await generate_token(message.from_user.username)
@@ -832,6 +929,28 @@ async def receive_message(message: Message, state: FSMContext):
                                     'Он должен использовать команду /admin с вашим токеном. Токен действует только один раз. '
                                     'Одновременно действителен только один токен.')
                     buttons = [[KeyboardButton(text='Назад')]]
+            case 'Вывести список администраторов':
+                buttons = [[KeyboardButton(text='Назад')]]
+                await bot.send_message(message.chat.id, 'Список администраторов:', reply_markup=ReplyKeyboardMarkup(keyboard=buttons))
+                admins = db.getAdmin()
+                if not admins:
+                    await bot.send_message(message.chat.id, "Список администраторов пуст.")
+                    return
+
+                await state.set_state(ViewAdmins.show)
+                await state.update_data(admins=admins, index=0)
+
+                admin = admins[0]
+                text = await get_admin_data(admin)
+                for i in range(1, min(3, len(admins))):
+                    text += '\n\n' + await get_admin_data(admins[i])
+
+                inline_buttons = []
+                if len(admins) > 3:
+                    inline_buttons.append(InlineKeyboardButton(text="▶️", callback_data="next_1"))
+                keyboard = InlineKeyboardMarkup(inline_keyboard=[inline_buttons] if inline_buttons else [])  # Передаем пустой список, если кнопок нет
+                
+                await bot.send_message(message.chat.id, text, reply_markup=keyboard)
             case 'Экспортировать базу данных в google sheets':
                 await bot.send_message(message.chat.id, 'Экспортируем...')
                 await FDataExport()
