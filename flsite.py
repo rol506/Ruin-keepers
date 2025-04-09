@@ -72,10 +72,11 @@ def process_request():
         telegram = request.form.get("telegram")
         phone = request.form.get("phone")
         eventID = request.form.get("eventID")
+        lunch = request.form.get("lunch")
 
         db = FDataBase(connect_db())
 
-        db.addUser(eventID, name, telegram, phone, birth)
+        db.addUser(eventID, name, telegram, phone, birth, lunch)
         #TODO message to the user "You have successfully registered for the event"
 
 @app.route("/events/events/register/pay", methods=["POST", "GET"])
@@ -86,6 +87,7 @@ def payment():
     telegram = session.get("telegram")
     phone = session.get("phone")
     eventID = session.get("eventID")
+    lunch = session.get("lunch")
 
     if not (name and birth and telegram and phone and eventID):
         print("Invalid data!")
@@ -104,7 +106,10 @@ def payment():
 
     cost = ev["cost"] / 100
 
-    return render_template("pay.html", event=ev, eventType=eventType, name=name, phone=phone, telegram=telegram, birth=birth, cost=cost, eventID=eventID)
+    lunchCost = ev["lunchCost"] if lunch else 0
+
+    return render_template("pay.html", event=ev, eventType=eventType, name=name, phone=phone, telegram=telegram, birth=birth, cost=cost,
+                           eventID=eventID, lunchCost=lunchCost/100, lunch=lunch)
 
 @app.route("/events/events/register", methods=["POST", "GET"])
 @app.route("/events/events/register/<eventID>", methods=["POST", "GET"])
@@ -122,6 +127,9 @@ def register_event(eventID=None):
         birth = request.form.get("birth")
         telegram = request.form.get("telegram")
         phone = request.form.get("phone")
+        lunch = request.form.get("lunch")
+
+        lunch = 0 if not lunch else 1
 
         eventID = request.form.get("eventID") if eventID is None else eventID
 
@@ -158,6 +166,7 @@ def register_event(eventID=None):
         session["telegram"] = telegram
         session["phone"] = phone
         session["eventID"] = eventID
+        session["lunch"] = lunch
 
         return redirect(url_for("payment"))
 
