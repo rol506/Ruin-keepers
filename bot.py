@@ -145,6 +145,7 @@ async def get_event_photo(message: Message, state: FSMContext):
                         path, data['event_place'], data['event_cost'], data['event_lunch_cost'])
             await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
             await state.set_state(None)
+            await show_menu(message)
 
 # endregion
 
@@ -162,8 +163,8 @@ async def get_event_id_delete(message: Message, state: FSMContext):
         if message.text.isnumeric():
             if db.getEventByID(message.text):
                 db.removeEventByID(message.text)
-                await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Мероприятие успешно удалено.')
+                await state.set_state(None)
                 await show_menu(message)
             else:
                 await bot.send_message(message.chat.id, 'Такого мероприятия не существует.')
@@ -324,6 +325,7 @@ async def get_event_photo_change(message: Message, state: FSMContext):
                     path, data['event_place'], data['event_cost'], data['event_lunch_cost'])
         await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
         await state.set_state(None)
+        await show_menu(message)
 
 # endregion
 
@@ -433,8 +435,8 @@ async def get_user_id_delete(message: Message, state: FSMContext):
         if message.text.isnumeric():
             if db.getUserByID(message.text):
                 db.removeUserByID(message.text)
-                await state.set_state(None)
                 await bot.send_message(message.chat.id, 'Запись успешно удалена.')
+                await state.set_state(None)
                 await show_menu(message)
             else:
                 await bot.send_message(message.chat.id, 'Такой записи не существует.')
