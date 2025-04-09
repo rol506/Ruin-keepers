@@ -668,7 +668,7 @@ async def get_event_data(event):
         f"🆔 ID: {event['id']}\n"
         f"🚩 Название: {event['name']}\n"
         f"📃 Описание: {event['description']}\n"
-        f"💳 Стоимость: {event['cost']}\n"
+        f"💳 Стоимость: {event['cost']} руб.\n"
         f"🏠 Место: {event['place']}\n"
         f"📆 Дата: {event['date']}\n"
         f"🕒 Время: {event['time']}\n"
