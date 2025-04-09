@@ -674,6 +674,8 @@ async def get_event_data(event):
 
 # endregion
 
+# region Misc
+
 async def verify_admin(token):
     with open('admin_token.txt', 'r+') as file:
         file_token = file.read()
@@ -726,6 +728,8 @@ async def parse_time(time):
         return datetime.time(h, m)
     except:
         return None
+
+# endregion
 
 @dp.message(Command("start"))
 async def cmd_start(message: Message, state: FSMContext):
