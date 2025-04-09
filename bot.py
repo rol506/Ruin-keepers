@@ -33,6 +33,8 @@ class CreateEvent (StatesGroup):
     photo_state = State()
     place_state = State()
     cost_state = State()
+    lunch_state = State()
+    lunch_cost_state = State()
 
 @dp.message(CreateEvent.name_state)
 async def get_event_name(message: Message, state: FSMContext):
@@ -91,6 +93,35 @@ async def get_event_cost(message: Message, state: FSMContext):
     else:
         if message.text.isnumeric():
             await state.update_data(event_cost=int(float(message.text) * 100))
+            await bot.send_message(message.chat.id, 'Будет ли обед на мероприятии? Введите да или нет.')
+            await state.set_state(CreateEvent.photo_state)
+        else:
+            await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
+
+@dp.message(CreateEvent.lunch_state)
+async def get_event_lunch(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.lower() == 'да':
+            await bot.send_message(message.chat.id, 'Введите стоимость обеда в рублях.')
+            await state.set_state(CreateEvent.lunch_cost_state)
+        elif message.text.lower() == 'нет':
+            await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию.')
+            await state.update_data(event_lunch_cost=-1)
+            await state.set_state(CreateEvent.photo_state)
+        else:
+            await bot.send_message(message.chat.id, 'Введите только ДА или НЕТ.')
+
+@dp.message(CreateEvent.lunch_cost_state)
+async def get_event_lunch_cost(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            await state.update_data(event_lunch_cost=int(float(message.text) * 100))
             await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию.')
             await state.set_state(CreateEvent.photo_state)
         else:
@@ -111,7 +142,7 @@ async def get_event_photo(message: Message, state: FSMContext):
             path = await create_photo()
             await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
             db.addEvent(data['event_name'], data['event_description'], data['event_date'], data['event_time'],
-                        path, data['event_place'], data['event_cost'])
+                        path, data['event_place'], data['event_cost'], data['event_lunch_cost'])
             await bot.send_message(message.chat.id, 'Мероприятие успешно создано.')
             await state.set_state(None)
 
@@ -151,6 +182,8 @@ class ChangeEvent (StatesGroup):
     photo_state = State()
     place_state = State()
     cost_state = State()
+    lunch_state = State()
+    lunch_cost_state = State()
 
 @dp.message(ChangeEvent.id_state)
 async def get_event_id_change(message: Message, state: FSMContext):
@@ -232,6 +265,39 @@ async def get_event_cost_change(message: Message, state: FSMContext):
     else:
         if message.text.isnumeric() or message.text == '.':
             await state.update_data(event_cost=int(float(message.text) * 100) if message.text != '.' else None)
+            await bot.send_message(message.chat.id, 'Будет ли обед на мероприятии? Введите да или нет. (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeEvent.photo_state)
+        else:
+            await bot.send_message(message.chat.id, 'Можно вводить только цифры.')
+
+@dp.message(ChangeEvent.lunch_state)
+async def get_event_lunch_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text == '.':
+            await state.update_data(event_lunch_cost=None)
+            await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию. (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeEvent.photo_state)
+        elif message.text.lower() == 'да':
+            await bot.send_message(message.chat.id, 'Введите стоимость обеда в рублях. (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeEvent.lunch_cost_state)
+        elif message.text.lower() == 'нет':
+            await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию. (Введите точку, чтобы оставить прежним)')
+            await state.update_data(event_lunch_cost=-1)
+            await state.set_state(ChangeEvent.photo_state)
+        else:
+            await bot.send_message(message.chat.id, 'Введите только ДА или НЕТ.')
+
+@dp.message(ChangeEvent.lunch_cost_state)
+async def get_event_lunch_cost_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.isnumeric():
+            await state.update_data(event_lunch_cost=int(float(message.text) * 100))
             await bot.send_message(message.chat.id, 'Пришлите фото, чтобы прикрепить его к мероприятию. (Введите точку, чтобы оставить прежним)')
             await state.set_state(ChangeEvent.photo_state)
         else:
@@ -255,7 +321,7 @@ async def get_event_photo_change(message: Message, state: FSMContext):
             await bot.download(message.photo[0].file_id, 'static/images/custom/' +  path)
 
         db.updateEvent(data['event_id'], data['event_name'], data['event_description'], data['event_date'], data['event_time'],
-                    path, data['event_place'], data['event_cost'])
+                    path, data['event_place'], data['event_cost'], data['event_lunch_cost'])
         await bot.send_message(message.chat.id, 'Мероприятие успешно изменено.')
         await state.set_state(None)
 
@@ -269,6 +335,7 @@ class RegisterUser (StatesGroup):
     telegram_state = State()
     phone_state = State()
     birth_state = State()
+    lunch_state = State()
 
 @dp.message(RegisterUser.name_state)
 async def get_user_name(message: Message, state: FSMContext):
@@ -313,8 +380,25 @@ async def get_user_phone(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(user_phone=message.text)
-        await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг".')
-        await state.set_state(RegisterUser.birth_state)
+        await bot.send_message(message.chat.id, 'Будет ли участник обедать? Введите да или нет.')
+        await state.set_state(RegisterUser.lunch_state)
+
+@dp.message(RegisterUser.lunch_state)
+async def get_user_lunch(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text.lower() == 'да':
+            await state.update_data(user_lunch=1)
+            await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг".')
+            await state.set_state(RegisterUser.birth_state)
+        elif message.text.lower() == 'нет':
+            await state.update_data(user_lunch=0)
+            await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг".')
+            await state.set_state(RegisterUser.birth_state)
+        else:
+            await bot.send_message(message.chat.id, 'Введите только ДА или НЕТ.')
 
 @dp.message(RegisterUser.birth_state)
 async def get_user_birth(message: Message, state: FSMContext):
@@ -327,7 +411,7 @@ async def get_user_birth(message: Message, state: FSMContext):
             data = await state.get_data()
 
             await bot.send_message(message.chat.id, f'{data['user_name']} успешно зарегистрирован(а) на мероприятие с ID {data['user_event']}.')
-            db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
+            db.addUser(data['user_event'], data['user_name'], data['user_telegram'], data['user_phone'], birth, data['user_lunch'])
             await state.set_state(None)
             await show_menu(message)
         else:
@@ -367,6 +451,7 @@ class ChangeRegistration (StatesGroup):
     telegram_state = State()
     phone_state = State()
     birth_state = State()
+    lunch_state = State()
 
 @dp.message(ChangeRegistration.id_state)
 async def get_user_id_change(message: Message, state: FSMContext):
@@ -413,8 +498,29 @@ async def get_user_phone_change(message: Message, state: FSMContext):
         await show_menu(message)
     else:
         await state.update_data(user_phone=message.text if message.text != '.' else None)
-        await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг". (Введите точку, чтобы оставить прежним)')
-        await state.set_state(ChangeRegistration.birth_state)
+        await bot.send_message(message.chat.id, 'Будет ли участник обедать? Введите да или нет. (Введите точку, чтобы оставить прежним)')
+        await state.set_state(ChangeRegistration.lunch_state)
+
+@dp.message(ChangeRegistration.lunch_state)
+async def get_user_lunch_change(message: Message, state: FSMContext):
+    if message.text == 'Назад':
+        await state.set_state(None)
+        await show_menu(message)
+    else:
+        if message.text == '.':
+            await state.update_data(user_lunch=None)
+            await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг". (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeRegistration.birth_state)
+        elif message.text.lower() == 'да':
+            await state.update_data(user_lunch=1)
+            await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг". (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeRegistration.birth_state)
+        elif message.text.lower() == 'нет':
+            await state.update_data(user_lunch=0)
+            await bot.send_message(message.chat.id, 'Введите дату рождения этого пользователя в формате "дд.мм.гггг". (Введите точку, чтобы оставить прежним)')
+            await state.set_state(ChangeRegistration.birth_state)
+        else:
+            await bot.send_message(message.chat.id, 'Введите только ДА или НЕТ.')
 
 @dp.message(ChangeRegistration.birth_state)
 async def get_user_birth_change(message: Message, state: FSMContext):
@@ -432,7 +538,7 @@ async def get_user_birth_change(message: Message, state: FSMContext):
         data = await state.get_data()
 
         await bot.send_message(message.chat.id, f'Запись успешно изменена.')
-        db.updateUser(data['user_id'], data['user_name'], data['user_telegram'], data['user_phone'], birth)
+        db.updateUser(data['user_id'], data['user_name'], data['user_telegram'], data['user_phone'], birth, data['user_lunch'])
         await state.set_state(None)
         await show_menu(message)
 
@@ -594,7 +700,7 @@ async def generate_token(username):
     time_token = str(hash(time.time())) + str(hash(username))
     return token + time_token
 
-async def parse_date(date, current_year: bool = False):
+async def parse_date(date):
     try:
         date = date.split('.')
         if len(date) == 3:
