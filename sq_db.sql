@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS events (
   place TEXT NOT NULL,
   date DATE NOT NULL,
   time TIME NOT NULL,
-  type TEXT NOT NULL
+  type TEXT NOT NULL,
+  lunchCost INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   telegram TEXT,
   phone TEXT NOT NULL,
-  birth DATE NOT NULL
+  birth DATE NOT NULL,
+  lunch BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS admins (
