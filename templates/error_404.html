@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <h1 style="font-size: 6rem">4<img src="{{url_for('static', filename='/images/broken_heart.png')}}" style="width: 6rem;">4</h1>
+        <h1>упс, эта страница не была найдена!</h1>
+        <h3>Вы можете вернуться <a href="/home" class="accent anim">на главную</a>.</h3>
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

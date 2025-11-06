@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <form method="post" class="login">
+
+          <p class="title">Вход</p>
+          <div>
+          <p>Логин</p>
+          <input type="text" required name="login">
+
+          <p>Пароль</p>
+          <input type="password" required name="password">
+
+          <br>
+          <input type="submit" value="Войти">
+
+          </div>
+        </form>
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

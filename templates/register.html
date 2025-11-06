@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <form method="post" class="login">
+
+          <p class="title">Регистрация</p>
+
+          <div>
+
+          <p style="text-align: center">ФИО</p>
+          <div class="inline">
+          <input type="text" required name="name" required placeholder='Имя' style="margin-right: 5px;", minlength="3">
+          <input type="text" required name="surname" required placeholder='Фамилия' style="margin: 0 5px;" minlength="3">
+          <input type="text" required name="fathername" placeholder='Отчество' style="margin-left: 5px">
+          </div>
+
+          <p>Ваше имя пользователя в телеграмм (необязательно)</p>
+          <input type="text" required name="telegram">
+
+          <p>Ваш номер телефона</p>
+          <input type="text" name="phone" required minlength="3">
+
+          <p>Ваша дата рождения</p>
+          <input type="date" name="birth" required>
+
+          {% if eventID %}
+            <input type="hidden" name="eventID" required>
+          {% else %}
+            <p>Выберите мероприятие</p>
+            <select name="eventID">
+              <option value="None">Выберите мероприятие</option>
+              {% for e in events %}
+              <option value="{{e.id}}">{{e.name}}</option>
+              {% endfor %}
+            </select>
+          {% endif %}
+
+          <div class="inline">
+          <label>Приобрести обед на мероприятии</label><input type="checkbox" name="lunch">
+          </div>
+
+          <br>
+          <input type="submit" value="К оплате">
+
+          </div>
+
+        </form>
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

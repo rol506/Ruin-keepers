@@ -1,0 +1,99 @@
+﻿{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {{super()}}
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    {{super()}}
+    <div class="container">
+        <section class="about">
+            <h1 style="font-size: 2rem;">О нас</h1>
+            <p>«Хранители руин» — это независимое волонтёрское движение, которое с 2020 года заботится об историческом наследии в Калининградской области, а в особенности — о руинах кирх и замков.</p>
+            <p>
+                Мы считаем, что экспрессивные руины — это изюминка региона, и стремимся их сохранить и подарить им «вторую жизнь» в качестве эстетичных и благоустроенных исторических парков и площадок для мероприятий.
+                Каждые выходные мы проводим интересные субботники-перфомансы на ценных исторических памятниках. Уже успели привести в порядок более 50 объектов на 130+ субботниках, в которых поучаствовало более 3000 волонтеров
+            </p>
+            <p>
+                В 2022 году мы зарегистрировали АНО «Хранители руин» и получили 2 субсидии Правительства КО на проведение субботников, а под штаб движения выделили ОКН регионального значения — Железнодорожные ворота.
+            </p>
+            <p>
+                А еще у нас есть краеведческие Прогулки Хранителей по городу и области и Лекторий Хранителей с интересными гидами, историками, архитекторами и другими специалистами.
+            </p>
+            <p>
+                Благодаря Хранителям десятки объектов стали лучше и тысячи людей поучаствовали в сохранении наследия. И вы тоже можете.
+            </p>
+            <p>
+                Следите за анонсами наших мероприятий и присоединяйтесь!
+            </p>
+
+        </section>
+
+        <div class="slider">
+            <button class="prev">&#10094;</button>
+            <img id="slider-img" src="{{ url_for('static', filename=slides[0]) }}" />
+            <button class="next">&#10095;</button>
+            <span class="caption">Фотографии с нашего мероприятия</span>
+        </div>
+
+        <section class="social">
+            <h2 style="font-size: 2rem;">Ссылки на наши соц сети:</h2>
+
+            <div class="social-row">
+                <img src="{{ url_for('static', filename='images/vk-icon.png') }}" alt="VK" class="social-icon vk-icon" />
+                <a class="social-btn" href="https://vk.com/ruin.keepers" target="_blank">
+                    <span class="heart">♡</span> https://vk.com/ruin.keepers
+                </a>
+            </div>
+
+            <div class="social-row">
+                <img src="{{ url_for('static', filename='images/tg-icon.png') }}" alt="Telegram" class="social-icon tg-icon" />
+                <a class="social-btn" href="https://t.me/ruin_keepers" target="_blank">
+                    <span class="heart">♡</span> https://t.me/ruin_keepers
+                </a>
+            </div>
+        </section>
+
+        <section class="donate">
+            <h2 style="font-size: 2rem">Донат</h2>
+            <p>А еще вы можете поддержать «Хранителей руин» пожертвованием. Мы будем рады любой сумме. Деньги мы используем для покупки инструментов и расходников для волонтерских субботников и материалов для благоустройства исторических объектов.</p>
+            <a class="donate-btn" href="https://qr.nspk.ru/AS1A00342DDPHMHM8GJ844HIF8200M0J?type=01&bank=100000000284&crc=EAAD#" target="_blank">
+                Отправить донат
+            </a>
+        </section>
+      </div>
+
+    <script >
+        const images = [
+          {% for s in slides %}
+            "{{url_for('static', filename=s)}}",
+          {% endfor %}
+        ]; 
+        let current = 0;
+
+        const sliderImg = document.getElementById("slider-img");
+        const prevBtn = document.querySelector(".prev");
+        const nextBtn = document.querySelector(".next");
+
+        prevBtn.addEventListener("click", () => {
+            current = (current - 1 + images.length) % images.length;
+            sliderImg.src = images[current];
+        });
+
+        nextBtn.addEventListener("click", () => {
+            current = (current + 1) % images.length;
+            sliderImg.src = images[current];
+        });
+    </script>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+</body>
+</html>
+

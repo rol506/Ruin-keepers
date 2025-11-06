@@ -1,0 +1,48 @@
+﻿{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {{super()}}
+    {% endblock %}
+    <meta charset="utf-8">
+</head>
+<body>
+    {% block body %}
+    {{super()}}
+    <div class="container">
+        <h1 style="font-size: 3rem; margin-bottom: 2rem;">ПРОГУЛКИ</h1>
+        <div class="route-section">
+            <div class="route-text">
+                <h2>Полесское кольцо</h2>
+                <p>
+                    Маршрут на северо-восток Калининградской области по архитектурным памятникам и другим достопримечательностям в живописных окрестностях Полесска или «Прусской Голландии». Включает территории.
+                    <br><br>
+                    Включает 3 исторических города, 18 кирх и 7 замков XIV-XX веков (из них 11 — руины), а также другие туристические и природные локации. Создан «Хранителями руин», чтобы сохранять наследие и развивать территории.
+                </p>
+            </div>
+            <div class="route-img">
+                <img src="{{ url_for('static', filename='images/walks2.jpg') }}" alt="Полесское кольцо">
+            </div>
+        </div>
+        <div class="route-section">
+            <div class="route-text">
+                <h2>Готическое кольцо</h2>
+                <p>
+                    Маршрут на юго-восток Калининградской области по готическим и неоготическим памятникам. <br><br>
+                    Включает ~30 кирх и 5 замков XIV-XIX веков, 8 исторических городов и другие туристические достопримечательности. Создан «Хранителями руин», чтобы сохранять наследие и развивать территории.
+                </p>
+            </div>
+            <div class="route-img">
+                <img src="{{ url_for('static', filename='images/walks1.jpg') }}" alt="Готическое кольцо">
+            </div>
+        </div>
+    </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+</body>
+</html>

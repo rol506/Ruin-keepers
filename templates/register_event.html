@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <form method="post" class="login">
+
+          <p class="title">Регистрация</p>
+
+          <div>
+
+          <p>Ваше ФИО</p>
+          <input type="text" required name="name" required>
+
+          <p>Ваше имя пользователя в телеграмм (необзательно)</p>
+          <input type="text" required name="login">
+
+
+
+          <br>
+          <input type="submit" value="Подтвердить">
+
+          </div>
+
+        </form>
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

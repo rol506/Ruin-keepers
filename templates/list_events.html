@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        {% if not events %}
+        <h1 style="font-size: 2.5rem; margin-bottom: 400px;">В этот день мероприятий не запланировано!</h1>
+        {% else %}
+
+        {% for e in events %}
+          <div class="eventDesc">
+            <p><span style="font-size: 2rem; font-weight: bolder">{{e.name}}</span> <span style="color: grey">{{e.date}}</span></p>
+            {% if maxlen > 0 and e.description|length > maxlen %}
+            <p style="font-size: 1.25rem;">{{e.description[:maxlen]|safe}}...</p>
+            {% else %}
+            <p style="font-size: 1.25rem;">{{e.description|safe}}</p>
+            {% endif %}
+            <form method="post" action="/events/events">
+              <input type="hidden" value="{{e.id}}" name="id">
+              <input type="submit" value="Подать заявку на мероприятие">
+            </form>
+            <hr>
+          </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

@@ -1,0 +1,14 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+bin
+include
+lib
+lib64
+pyvenv.cfg
+SETTINGS.py
+__pycache__
+.vs/Ruin-keepers/FileContentIndex/
+ruin-keepers.json
+env
+.vs
+flsite.db
+admin_token.txt

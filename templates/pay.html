@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <h1>Оплата покупки</h1>
+
+        <table class="receipt">
+          <tr>
+            <td>ФИО</td><td>{{name}}</td>
+          </tr>
+          <tr>
+            <td>Дата рождения</td><td>{{birth}}</td>
+          </tr>
+          {% if telegram %}
+          <tr>
+            <td>Telegram</td><td>{{telegram}}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td>Telegram</td><td>Не указано</td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td>Номер телефона</td><td>{{phone}}</td>
+          </tr>
+          <tr>
+            <td>Название мероприятия</td><td>{{event.name}}</td>
+          </tr>
+          <tr>
+            <td>Тип мероприятия</td><td>{{eventType}}</td>
+          </tr>
+          <tr>
+            <td>Стоимость</td><td>{{cost}} руб.</td>
+          </tr>
+          {% if lunch %}
+          <tr>
+            <td>Обед</td><td>Да</td>
+          </tr>
+          <tr>
+            <td>Стоимость обеда</td><td>{{lunchCost}} руб.</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td>Обед</td><td>Нет</td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td>Итого</td><td>{{lunchCost + cost}} руб.</td>
+          </tr>
+        </table>
+
+        <form method="POST">
+          <input type="submit" value="Оплатить {{lunchCost + cost}} руб.">
+          <input type="hidden" name="name" value="{{name}}">
+          <input type="hidden" name="birth" value="{{birth}}">
+          <input type="hidden" name="telegram" value="{{telegram}}">
+          <input type="hidden" name="phone" value="{{phone}}">
+          <input type="hidden" name="eventID" value="{{eventID}}">
+          {% if lunch %}
+          <input type="hidden" name="lunchCost" value="{{lunchCost}}">
+          {% else %}
+          <input type="hidden" name="lunchCost" value="0">
+          {% endif %}
+          <input type="hidden" name="lunch" value="{{lunch}}">
+          </form>
+
+      </div>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

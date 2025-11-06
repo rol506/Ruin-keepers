@@ -1,0 +1,703 @@
+﻿* {
+  font-family: "Fira Sans", serif;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100vw;
+  scroll-behavior: smooth;
+  overflow-x:hidden;
+}
+
+div.mainmenu {
+  position: static;
+  background-color: #2C2D39;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 3rem;
+  min-width: 100vw;
+}
+
+div.mainmenu div:not(div.mainmenu, div:first-child) {
+  padding-left: 2.5rem;
+}
+
+div.mainmenu div a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+div.footer {
+  position: static;
+  background: #2C2D39;
+  color: white;
+  font-weight: bolder;
+  font-size: 1.25rem;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: max(50vh, 40px);
+}
+
+.logoText {
+  font-size: 3rem;
+  position: absolute;
+  padding-top: 10px;
+  font-weight: bolder;
+}
+
+.logoTextSec {
+  top: 6rem;
+}
+
+img.logo {
+  width: 8rem;
+}
+
+table.calendar {
+  font-size: 2rem;
+}
+
+table.calendar td {
+  padding: 10px;
+  border-radius: 32px;
+  text-align: center;
+  font-family: "Unbounded";
+}
+
+table.calendar td.not-current {
+  color: grey;
+}
+
+table.calendar td.with-event {
+  background: #7CE8E6;
+}
+
+table.calendar thead {
+  background: #47695B;
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-wrapper {
+  margin-bottom: 20px;
+  display: inline-flex;
+}
+
+.calendar-wrapper button {
+  z-index: 101;
+  color: black;
+  font-size: 3rem;
+  background: none;
+  border: none;
+  transition: 0.1s ease-in-out all;
+  height: min-content;
+  border-radius: 8px;
+  margin: 4px;
+}
+
+.calendar-wrapper button:hover {
+  background-color: #e3e3e3;
+  cursor: pointer;
+}
+
+.calendar-wrapper button:active {
+  background: #828181;
+}
+
+table.receipt, table.receipt tr, table.receipt tr td {
+  border: 1px solid black;
+}
+
+table.receipt td {
+  padding: 5px;
+}
+
+table.receipt {
+  border-collapse: collapse;
+}
+
+div.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+form.login {
+  margin-top: 20px;
+  background: #47695B;
+  padding: 5px;
+  padding-top: 1px;
+  border-radius: 16px;
+  font-family: "Unbounded";
+}
+
+form.login p.title {
+  text-align: center;
+  margin: 0;
+  color: white;
+  font-weight: bolder;
+  font-size: 2rem;
+}
+
+form.login p {
+  margin: 10px 0 2px 0;
+}
+
+form.login div {
+  background: white;
+  padding: 5px 32px;
+  border-radius: 16px;
+}
+
+form.login input:not(input[type="submit"]):focus, select:focus, button.submit:focus
+{
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid black;
+}
+
+form.login input:not(input[type="submit"]), select, button.submit
+{
+  padding: 2px;
+  border-radius: 4px;
+  border: 1px solid black;
+  transition: 0.1s ease-out all;
+  width: 100%;
+  background: white;
+}
+
+form.login div input[type="submit"], input[type="submit"], button.submit
+{
+  padding: 10px 20px;
+  border-radius: 4px;
+  color: black;
+  font-weight: bolder;
+  font-size: 2rem;
+  border: none;
+  margin: 20px 0px;
+  background: #7CE8E6;
+  transition: 0.1s ease-out all;
+}
+
+form.login div input[type="submit"], input[type="submit"]
+{
+  width: 100%;
+}
+
+form.login div input[type="submit"]:hover, input[type="submit"]:hover, button.submit:hover{
+  background: #61b0ae;
+}
+
+form.login div input[type="submit"]:active, input[type="submit"]:active, button.submit:active{
+  background: #4b8280;
+}
+
+div.inline {
+  display: inline-flex;
+}
+
+a.anim-header {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  text-decoration: none;
+}
+
+a.anim-header:hover {
+  color: #fff;
+}
+
+a.anim-header::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-header:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim {
+  position: relative;
+  text-decoration: none;
+  color: #000;
+  text-decoration: none;
+  font-family: "Unbounded";
+}
+
+a.anim::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-accent {
+  position: relative;
+  text-decoration: none;
+  color: #335435;
+  text-decoration: none;
+}
+
+a.anim-accent::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #335435;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-accent:hover::before {
+  transform: scaleX(1);
+}
+
+a.anim-grey {
+  position: relative;
+  text-decoration: none;
+  color: grey;
+  text-decoration: none;
+  font-family: "Unbounded";
+}
+
+a.anim-grey::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: grey;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+a.anim-grey:hover::before {
+  transform: scaleX(1);
+}
+
+.accent {
+  color: #335435;
+}
+
+.accent::after, .accent::before {
+  background: #335435; 
+}
+
+div.bottom {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
+}
+
+div.flash-info {
+  border: 1px solid black;
+  background: #7CE8E6;
+  border-radius: 16px;
+  padding: 10px;
+  position: relative;
+  margin: 10px;
+  z-index: 101;
+}
+
+div.flash-info p {
+  text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+    font-family: sans-serif;
+}
+
+.route-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    background-color: #f8f8f8;
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
+.route-text {
+    flex: 1 1 50%;
+    padding-right: 2rem;
+}
+
+.route-text h2 {
+  font-size: 2.5rem;
+  color: #2eaf7d;
+  margin-bottom: 1rem;
+}
+
+.route-text p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.route-img {
+    flex: 1 1 40%;
+}
+
+.route-img img {
+  width: 100%;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.topbar {
+    background-color: #2c2c38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 32px;
+}
+
+.topbar-menu {
+    display: flex;
+    gap: 60px;
+}
+
+.topbar-menu a {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.2s;
+}
+
+.topbar-menu a:hover {
+            color: #ccc;
+}
+
+
+.topbar-logo img {
+    height: 30px;
+}
+
+.gallery-wrapper {
+    padding: 40px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+    .gallery-header h2 {
+        font-size: 36px;
+        margin: 0;
+    }
+
+    .gallery-header p {
+        font-size: 18px;
+        margin: 0;
+        max-width: 60%;
+    }
+
+.gallery-container {
+    overflow: hidden;
+    position: relative;
+}
+
+.gallery {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+    .gallery img {
+        aspect-ratio: 1/1.5;
+        height: 50vh;
+        object-fit: cover;
+        margin: 0 10px;
+        flex-shrink: 0;
+        opacity: 0.3;
+        transform: scale(0.9);
+        transition: 0.3s ease-in-out;
+        border-radius:32px;
+    }
+
+        .gallery img.active {
+            opacity: 1;
+            transform: scale(1);
+            border: 3px solid #007BFF;
+        }
+
+.gallery-controls {
+    text-align: center;
+    margin-top: 15px;
+}
+
+    .gallery-controls button {
+        font-size: 20px;
+        padding: 6px 18px;
+        margin: 5px 10px;
+        cursor: pointer;
+        background-color: #2c2c38;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        transition: background 0.3s;
+    }
+
+        .gallery-controls button:hover {
+            background-color: #444;
+        }
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 2rem;
+}
+
+h1, h2 {
+    font-weight: bold;
+
+}
+
+.about p {
+    margin-bottom: 1em;
+    font-size: 1.2em;
+}
+
+.photo-section {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+    .photo-section img {
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+.caption {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.social {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.social-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.social-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+}
+
+.vk-icon {
+    width: 100px;
+    height: 100px;
+}
+
+.tg-icon {
+    width: 100px;
+    height: 100px;
+}
+
+.social-btn {
+    background: linear-gradient(90deg, #aef1f1, #7ce6e6);
+    padding: 12px 16px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s ease;
+    width: 40%;
+    max-width: 400px;
+    font-size: 1rem;
+}
+
+    .social-btn:hover {
+        background: linear-gradient(90deg, #8cdada, #56d0d0);
+    }
+
+.heart {
+    font-size: 22px;
+    color: #1a1a1a;
+}
+ 
+
+
+.donate-btn {
+    display: inline-block;
+    background: #aef1f1;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+    font-size: 1.5em;
+    margin-left: auto;
+}
+
+    .donate-btn:hover {
+        background: #8cdada;
+    }
+
+.slider {
+    position: relative;
+    width: 700px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+    .slider img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .slider .caption {
+        display: block;
+        margin-top: 0.5em;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .slider button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-59%);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0 10px;
+        border-radius: 5px;
+    }
+
+    .slider .prev {
+        left: -40px;
+    }
+
+    .slider .next {
+        right: -40px;
+    }
+    .social, .donate {
+        width: 70vw;
+        display: flex;
+        flex-direction: column;
+    }
+.media-link {
+    display: flex;
+    align-items: center;
+    margin-top: 32px;
+    gap: 16px;
+}
+
+.media-icon {
+    width: 250px;
+    height: 250px;
+}
+
+.media-text {
+    font-weight: 800;
+    font-size: 1.5em;
+    color: #000;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.3s ease;
+}
+
+.media-text:hover {
+  color: #555;
+}
+
+@media screen and (max-width: 600px)
+{
+  div.mainmenu div a {
+    font-size: 1rem;
+  }
+
+  div.mainmenu div:not(div.mainmenu, div:first-child) {
+    padding-left: 1.5rem;
+  }
+
+  .logoText {
+    font-size: 1.5rem;
+  }
+
+  .logoTextSec {
+    top: 5rem;
+  }
+
+  img.logo {
+    width: 5rem;
+  }
+
+  table.calendar td {
+    padding: 7.5px;
+  }
+
+  table.calendar {
+    font-size: 1rem;
+  }
+
+  input[type="submit"] {
+    font-size: 1rem;
+  }
+
+  div.footer {
+    font-size: 0.75rem;
+  }
+
+  .social-btn {
+    font-size: 0.75rem;
+  }
+}
+
+

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+      {{super()}}
+      <div class="container">
+        <h1 style="font-size: 3rem">Мероприятия</h1>
+
+        <form method="post">
+          <input type="submit" value="Участвовать в мероприятии">
+        </form>
+
+        <h1>Календарь мероприятий</h1>
+        <h4>Дни с мероприятиями отмечены</h4>
+
+        <div class="calendar-wrapper">
+          <button id="btnPrev" type="button">&#10094;</button>
+          <div id="divCal"></div>
+          <button id="btnNext" type="button">&#10095;</button>
+        </div>
+      </div>
+      <script>        
+function genDate(year, month, day)
+  {
+    dat = year + "-";
+    if (month < 10)
+    {
+      dat += "0" + month + "-";
+    } else {
+      dat += month + "-";
+    }
+    if (day < 10)
+    {
+      dat += "0" + day;
+    } else {
+      dat += day;
+    }
+    return dat;
+  }
+var Cal = function(divId) {
+  this.events = [
+    {% for ev in events %}
+      "{{ev.date}}",
+    {% endfor %}
+  ] 
+  this.divId = divId;
+  this.DaysOfWeek = [
+    'Пн',
+    'Вт',
+    'Ср',
+    'Чт',
+    'Пт',
+    'Сб',
+    'Вс'
+  ];
+  this.Months =['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  var d = new Date();
+  this.currMonth = d.getMonth();
+  this.currYear = d.getFullYear();
+  this.currDay = d.getDate();
+};
+Cal.prototype.nextMonth = function() {
+  if ( this.currMonth == 11 ) {
+    this.currMonth = 0;
+    this.currYear = this.currYear + 1;
+  }
+  else {
+    this.currMonth = this.currMonth + 1;
+  }
+  this.showcurr();
+};
+Cal.prototype.previousMonth = function() {
+  if ( this.currMonth == 0 ) {
+    this.currMonth = 11;
+    this.currYear = this.currYear - 1;
+  }
+  else {
+    this.currMonth = this.currMonth - 1;
+  }
+  this.showcurr();
+};
+Cal.prototype.showcurr = function() {
+  this.showMonth(this.currYear, this.currMonth);
+};
+Cal.prototype.showMonth = function(y, m) {
+  var d = new Date()
+  , firstDayOfMonth = new Date(y, m, 7).getDay()
+  , lastDateOfMonth =  new Date(y, m+1, 0).getDate()
+  , lastDayOfLastMonth = m == 0 ? new Date(y-1, 11, 0).getDate() : new Date(y, m, 0).getDate();
+  var html = '<table class="calendar">';
+  html += '<thead><tr>';
+  html += '<td colspan="7">' + this.Months[m] + ' ' + y + '</td>';
+  html += '</tr></thead>';
+  html += '<tr class="days">';
+  for(var i=0; i < this.DaysOfWeek.length;i++) {
+    if (i >= 5)
+    {
+      html += '<td style="color: #47695B; font-weight: bolder;">' + this.DaysOfWeek[i] + '</td>';
+    } else {
+      html += '<td style="font-weight: bolder;">' + this.DaysOfWeek[i] + '</td>';
+    }
+  }
+  html += '</tr>';
+  var i=1;
+  do {
+    var dow = new Date(y, m, i).getDay();
+    if ( dow == 1 ) {
+      html += '<tr>';
+    }
+    else if ( i == 1 ) {
+      html += '<tr>';
+      var k = lastDayOfLastMonth - firstDayOfMonth+1;
+      var chk = new Date();
+      var chkM = chk.getMonth();
+      var chkY = chk.getFullYear();
+      for(var j=0; j < firstDayOfMonth; j++) {
+        if (this.currYear == chkY && this.currMonth -1 == chkM && this.events.includes(genDate(this.currYear, this.currMonth, k)))
+        {
+          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + this.currYear + "/" + (this.currMonth) + '/' + k + '">' + k + '</a></td>';
+        } else {
+          html += '<td class="not-current">' + k + '</td>';
+        }
+        k++;
+      }
+    }
+    var chk = new Date();
+    var chkY = chk.getFullYear();
+    var chkM = chk.getMonth();
+    if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) { 
+      if (this.events.includes(genDate(this.currYear, 1+this.currMonth, i)))
+      {
+        html += '<td class="today with-event"><a class="anim-accent" href="/events/day/' + this.currYear + "/" + (1+Number(this.currMonth)) + '/'+ i+'">'+i+'</a></td>';
+      } else {
+        html += '<td class="today">' + i + '</td>';
+      }
+    } else {
+      if (this.currMonth == chkM && this.currYear == chkY && this.events.includes(genDate(this.currYear, 1+this.currMonth, i)))
+      {
+        html += '<td class="with-event"><a class="anim" href="/events/day/' +this.currYear + '/' + (1+Number(this.currMonth)) + '/' + i + '">' + i + '</a></td>';
+      } else {
+        html += '<td class="normal">' + i + '</td>';
+      }
+    }
+    if ( dow == 0 ) {
+      html += '</tr>';
+    }
+    else if ( i == lastDateOfMonth ) {
+      var k=1;
+      for(dow; dow < 7; dow++) {
+        if (this.currYear == chkY && this.currMonth +1 == chkM && this.events.includes(genDate(this.currYear, 2+this.currMonth, k)))
+        {
+          html += '<td class="not-current with-event"><a class="anim-grey" href="/events/day/' + this.currYear+'/'+(this.currMonth+2) + '/'+ k + '">' + k + '</a></td>';
+        } else {
+          html += '<td class="not-current">' + k + '</td>';
+        }
+        k++;
+      }
+    }
+    i++;
+  }while(i <= lastDateOfMonth);
+  html += '</table>';
+  document.getElementById(this.divId).innerHTML = html;
+};
+window.onload = function() {
+  var c = new Cal("divCal");			
+  c.showcurr();
+  getId('btnNext').onclick = function() {
+    c.nextMonth();
+  };
+  getId('btnPrev').onclick = function() {
+    c.previousMonth();
+  };
+}
+function getId(id) {
+  return document.getElementById(id);
+}
+      </script>
+    {% endblock body %}
+
+    {% block footer %}
+    {{super()}}
+    {% endblock footer %}
+  </body>
+</html>

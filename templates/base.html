@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block title %}
+      {% if title %}
+        <title>Ruin Keepers - {{title}}</title>
+      {% else %}
+        <title>Ruin Keepers</title>
+      {% endif %}
+    {% endblock title%}
+
+      {% block link %}
+        <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+      {% endblock link %}
+
+    {% endblock head %}
+  </head>
+  <body>
+      
+ {% block body %}
+
+    {% block flash %}
+    <div class="bottom">
+      {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash-{{cat}}"><p>{{msg}}</p></div>
+      {% endfor %}
+    </div>
+    {% endblock flash %}
+
+      {% block mainmenu %}
+        <div class="mainmenu">
+        {% for m in menu %}
+          <div>
+            <a href="{{m.url}}" class="anim-header">{{m.title}}</a>
+          </div>
+        {% endfor %}
+        </div>
+
+        <img src="{{url_for('static', filename='images/logo.png')}}" class="logo">
+        <label class="logoText">Хранители</label>
+        <label class="logoTextSec logoText">Руин</label>
+      {% endblock mainmenu %}
+
+    {% endblock body %}
+
+    {% block footer %}
+    <div class="footer">
+      <div>Ruin Keepers © 2020-2023</div>
+      <div><a class="anim-header" href="mailto:ruin.keepers@gmail.com">ruin.keepers@gmail.com</a></div>
+    </div>
+    {% endblock footer %}
+
+  </body>
+</html>
